@@ -52,3 +52,47 @@ npm start
 ```
 
 The app will run on http://localhost:3000 
+
+gbengs install steps
+
+1. Install Node
+
+```bash
+winget install OpenJS.NodeJS.LTS
+```
+2. Check the version to confirm installation(optional)
+
+```bash
+node --version
+```
+Restart your Terminal and IDE  if you get an ERROR and run the version confirmation code again.
+
+3. install npm 
+
+A. First, Remove package-lock.json file in the cloned repo, this allows your npm to install properly and creates the node_modules in your project directory.
+
+```bash
+Remove-Item -Force package-lock.json
+```
+
+B. Next, proceed to install npm.
+
+```bash
+npm install
+```
+C. Check the version to confirm installation(optional)
+
+```bash
+npm --version
+```
+D. To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+E. If packages are looking for funding  
+   run `npm fund` for details
+
+4. Starting the Frontend Server
+   
+   ```bash
+      npm start
+   ```
