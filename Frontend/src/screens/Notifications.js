@@ -10,7 +10,7 @@ import {
   Chip,
 } from '@mui/material';
 import {
-//  Notifications,
+  Notifications as NotificationsIcon,
   Warning,
   Info,
   CheckCircle,
@@ -64,7 +64,7 @@ function Notifications() {
       case 'error':
         return <Error color="error" />;
       default:
-        return <Notifications />;
+        return <NotificationsIcon />;
     }
   };
 

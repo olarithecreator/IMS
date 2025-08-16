@@ -44,9 +44,21 @@ function Login() {
       return;
     }
 
-    // Simulate login - in real app, this would be an API call
-    if (formData.email === 'admin@example.com' && formData.password === 'password') {
+    // Check credentials against stored users
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const user = users.find(u => u.email === formData.email && u.password === formData.password);
+    
+    if (user) {
+      // Store user info and authentication status
       localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('currentUser', JSON.stringify({
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        company: user.company,
+        role: user.role
+      }));
       navigate('/dashboard');
     } else {
       setError('Invalid email or password');
