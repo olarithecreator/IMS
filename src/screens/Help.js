@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import {
   ExpandMore,
-  Help,
+  Help as HelpIcon,
   Support,
   Book,
   VideoLibrary,

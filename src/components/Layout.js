@@ -32,6 +32,7 @@ import {
   ChevronLeft,
   Add,
   Search,
+  Storage,
 } from '@mui/icons-material';
 
 const drawerWidth = 240;
@@ -44,6 +45,7 @@ const menuItems = [
   { text: 'Orders', icon: <ShoppingCart />, path: '/orders' },
   { text: 'Reports', icon: <Assessment />, path: '/reports' },
   { text: 'Settings', icon: <Settings />, path: '/settings' },
+  { text: 'Local Storage', icon: <Storage />, path: '/dashboard/local-storage' },
 ];
 
 function Layout() {
