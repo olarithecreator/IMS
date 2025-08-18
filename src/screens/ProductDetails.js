@@ -90,7 +90,7 @@ function ProductDetails() {
   };
 
   const handleEdit = () => {
-    navigate(`/edit-product/${id}`);
+    navigate(`/dashboard/edit-product/${id}`);
   };
 
   const handleDelete = () => {
@@ -121,7 +121,7 @@ function ProductDetails() {
           <Button
             variant="outlined"
             startIcon={<ArrowBack />}
-            onClick={() => navigate('/inventory')}
+            onClick={() => navigate('/dashboard/inventory')}
           >
             Back
           </Button>
