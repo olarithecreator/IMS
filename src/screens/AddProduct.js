@@ -132,7 +132,7 @@ function AddProduct() {
       console.log('Submitting product:', formData);
       setSuccess(true);
       setTimeout(() => {
-        navigate('/inventory');
+        navigate('/dashboard/inventory');
       }, 2000);
     }
   };
@@ -412,7 +412,7 @@ function AddProduct() {
         <Button
           variant="outlined"
           startIcon={<Cancel />}
-          onClick={() => navigate('/inventory')}
+          onClick={() => navigate('/dashboard/inventory')}
         >
           Cancel
         </Button>

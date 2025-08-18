@@ -107,14 +107,14 @@ function InventoryList() {
 
   const handleEdit = () => {
     if (selectedProduct) {
-      navigate(`/edit-product/${selectedProduct.id}`);
+      navigate(`/dashboard/edit-product/${selectedProduct.id}`);
     }
     handleMenuClose();
   };
 
   const handleView = () => {
     if (selectedProduct) {
-      navigate(`/product/${selectedProduct.id}`);
+      navigate(`/dashboard/product-details/${selectedProduct.id}`);
     }
     handleMenuClose();
   };
@@ -229,7 +229,7 @@ function InventoryList() {
         <Button
           variant="contained"
           startIcon={<Add />}
-          onClick={() => navigate('/add-product')}
+          onClick={() => navigate('/dashboard/add-product')}
         >
           Add Product
         </Button>

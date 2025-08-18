@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   Box,
@@ -50,6 +50,7 @@ const suppliers = [
 function EditProduct() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const timeoutsRef = useRef([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -74,7 +75,7 @@ function EditProduct() {
 
   useEffect(() => {
     // Simulate loading product data
-    setTimeout(() => {
+    const loadTimeout = setTimeout(() => {
       setFormData({
         name: 'iPhone 13 Pro',
         sku: 'IP13P-256-BLK',
@@ -93,6 +94,12 @@ function EditProduct() {
       });
       setLoading(false);
     }, 1000);
+    timeoutsRef.current.push(loadTimeout);
+
+    return () => {
+      timeoutsRef.current.forEach((t) => clearTimeout(t));
+      timeoutsRef.current = [];
+    };
   }, [id]);
 
   const handleChange = (e) => {
@@ -113,12 +120,54 @@ function EditProduct() {
   const validateForm = () => {
     const newErrors = {};
 
+    const toNumber = (val) => {
+      const n = Number(val);
+      return Number.isFinite(n) ? n : null;
+    };
+    const toInteger = (val) => {
+      const n = Number(val);
+      return Number.isInteger(n) ? n : null;
+    };
+
     if (!formData.name.trim()) newErrors.name = 'Product name is required';
     if (!formData.sku.trim()) newErrors.sku = 'SKU is required';
     if (!formData.category) newErrors.category = 'Category is required';
     if (!formData.supplier) newErrors.supplier = 'Supplier is required';
-    if (!formData.price || formData.price <= 0) newErrors.price = 'Valid price is required';
-    if (!formData.stock || formData.stock < 0) newErrors.stock = 'Valid stock quantity is required';
+
+    const price = toNumber(formData.price);
+    if (price === null || price <= 0) newErrors.price = 'Enter a valid price greater than 0';
+
+    const stock = toInteger(formData.stock);
+    if (stock === null || stock < 0) newErrors.stock = 'Enter a valid non-negative whole number';
+
+    if (formData.cost !== '') {
+      const cost = toNumber(formData.cost);
+      if (cost === null || cost < 0) newErrors.cost = 'Enter a valid non-negative cost';
+    }
+
+    const minStock = formData.minStock === '' ? null : toInteger(formData.minStock);
+    const maxStock = formData.maxStock === '' ? null : toInteger(formData.maxStock);
+    if (formData.minStock !== '' && (minStock === null || minStock < 0)) newErrors.minStock = 'Enter a valid non-negative whole number';
+    if (formData.maxStock !== '' && (maxStock === null || maxStock < 0)) newErrors.maxStock = 'Enter a valid non-negative whole number';
+    if (minStock !== null && maxStock !== null && minStock > maxStock) {
+      newErrors.minStock = 'Minimum cannot exceed maximum';
+      newErrors.maxStock = 'Maximum must be at least the minimum';
+    }
+
+    if (formData.weight !== '') {
+      const weight = toNumber(formData.weight);
+      if (weight === null || weight < 0) newErrors.weight = 'Enter a valid non-negative weight';
+    }
+
+    if (formData.dimensions.trim() !== '') {
+      const dimsOk = /^\s*\d+(?:\.\d+)?\s*x\s*\d+(?:\.\d+)?\s*x\s*\d+(?:\.\d+)?\s*$/i.test(formData.dimensions);
+      if (!dimsOk) newErrors.dimensions = 'Use format: L x W x H (e.g., 10 x 5 x 2)';
+    }
+
+    if (formData.barcode.trim() !== '') {
+      const barcodeOk = /^\d{8,14}$/.test(formData.barcode.trim());
+      if (!barcodeOk) newErrors.barcode = 'Use 8-14 digits only';
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -135,14 +184,16 @@ function EditProduct() {
     setSaving(true);
     
     // Simulate API call
-    setTimeout(() => {
+    const apiTimeout = setTimeout(() => {
       console.log('Updating product:', formData);
       setSaving(false);
       setSuccess(true);
-      setTimeout(() => {
-        navigate('/inventory');
+      const redirectTimeout = setTimeout(() => {
+        navigate('/dashboard/inventory');
       }, 2000);
+      timeoutsRef.current.push(redirectTimeout);
     }, 1500);
+    timeoutsRef.current.push(apiTimeout);
   };
 
   if (loading) {
@@ -160,7 +211,7 @@ function EditProduct() {
           <Button
             variant="outlined"
             startIcon={<ArrowBack />}
-            onClick={() => navigate('/inventory')}
+            onClick={() => navigate('/dashboard/inventory')}
           >
             Back
           </Button>
@@ -171,7 +222,7 @@ function EditProduct() {
         <Button
           variant="outlined"
           startIcon={<Cancel />}
-          onClick={() => navigate('/inventory')}
+          onClick={() => navigate('/dashboard/inventory')}
         >
           Cancel
         </Button>
@@ -291,6 +342,7 @@ function EditProduct() {
                 onChange={handleChange}
                 error={!!errors.price}
                 helperText={errors.price}
+                inputProps={{ min: 0.01, step: 0.01 }}
                 required
               />
             </Grid>
@@ -303,6 +355,9 @@ function EditProduct() {
                 type="number"
                 value={formData.cost}
                 onChange={handleChange}
+                error={!!errors.cost}
+                helperText={errors.cost}
+                inputProps={{ min: 0, step: 0.01 }}
               />
             </Grid>
             
@@ -316,6 +371,7 @@ function EditProduct() {
                 onChange={handleChange}
                 error={!!errors.stock}
                 helperText={errors.stock}
+                inputProps={{ min: 0, step: 1 }}
                 required
               />
             </Grid>
@@ -330,6 +386,7 @@ function EditProduct() {
                 onChange={handleChange}
                 error={!!errors.minStock}
                 helperText={errors.minStock}
+                inputProps={{ min: 0, step: 1 }}
               />
             </Grid>
             
@@ -341,6 +398,9 @@ function EditProduct() {
                 type="number"
                 value={formData.maxStock}
                 onChange={handleChange}
+                error={!!errors.maxStock}
+                helperText={errors.maxStock}
+                inputProps={{ min: 0, step: 1 }}
               />
             </Grid>
 
@@ -358,6 +418,9 @@ function EditProduct() {
                 type="number"
                 value={formData.weight}
                 onChange={handleChange}
+                error={!!errors.weight}
+                helperText={errors.weight}
+                inputProps={{ min: 0, step: 0.001 }}
               />
             </Grid>
             
@@ -369,6 +432,8 @@ function EditProduct() {
                 value={formData.dimensions}
                 onChange={handleChange}
                 placeholder="10 x 5 x 2"
+                error={!!errors.dimensions}
+                helperText={errors.dimensions}
               />
             </Grid>
             
@@ -379,6 +444,8 @@ function EditProduct() {
                 name="barcode"
                 value={formData.barcode}
                 onChange={handleChange}
+                error={!!errors.barcode}
+                helperText={errors.barcode}
               />
             </Grid>
             
@@ -397,7 +464,7 @@ function EditProduct() {
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 4 }}>
             <Button
               variant="outlined"
-              onClick={() => navigate('/inventory')}
+              onClick={() => navigate('/dashboard/inventory')}
             >
               Cancel
             </Button>

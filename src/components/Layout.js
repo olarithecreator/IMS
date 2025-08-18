@@ -39,12 +39,12 @@ const drawerWidth = 240;
 
 const menuItems = [
   { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
-  { text: 'Inventory', icon: <Inventory />, path: '/inventory' },
-  { text: 'Categories', icon: <Category />, path: '/categories' },
-  { text: 'Suppliers', icon: <People />, path: '/suppliers' },
-  { text: 'Orders', icon: <ShoppingCart />, path: '/orders' },
-  { text: 'Reports', icon: <Assessment />, path: '/reports' },
-  { text: 'Settings', icon: <Settings />, path: '/settings' },
+  { text: 'Inventory', icon: <Inventory />, path: '/dashboard/inventory' },
+  { text: 'Categories', icon: <Category />, path: '/dashboard/categories' },
+  { text: 'Suppliers', icon: <People />, path: '/dashboard/suppliers' },
+  { text: 'Orders', icon: <ShoppingCart />, path: '/dashboard/orders' },
+  { text: 'Reports', icon: <Assessment />, path: '/dashboard/reports' },
+  { text: 'Settings', icon: <Settings />, path: '/dashboard/settings' },
   { text: 'Local Storage', icon: <Storage />, path: '/dashboard/local-storage' },
 ];
 
@@ -162,10 +162,10 @@ function Layout() {
         open={Boolean(anchorEl)}
         onClose={handleProfileMenuClose}
       >
-        <MenuItem onClick={() => { handleProfileMenuClose(); navigate('/profile'); }}>
+        <MenuItem onClick={() => { handleProfileMenuClose(); navigate('/dashboard/profile'); }}>
           Profile
         </MenuItem>
-        <MenuItem onClick={() => { handleProfileMenuClose(); navigate('/settings'); }}>
+        <MenuItem onClick={() => { handleProfileMenuClose(); navigate('/dashboard/settings'); }}>
           Settings
         </MenuItem>
         <Divider />
@@ -202,7 +202,7 @@ function Layout() {
         <Divider />
         <List>
           <ListItem disablePadding>
-            <ListItemButton onClick={() => handleNavigation('/add-product')}>
+            <ListItemButton onClick={() => handleNavigation('/dashboard/add-product')}>
               <ListItemIcon>
                 <Add />
               </ListItemIcon>

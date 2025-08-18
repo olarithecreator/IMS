@@ -21,6 +21,14 @@ import AddNewProduct from './screens/AddNewProduct';
 import ReportPage from './screens/ReportPage';
 import AlertForgetPassword from './screens/AlertForgetPassword';
 import LocalStorageViewer from './screens/LocalStorageViewer';
+import InventoryList from './screens/InventoryList';
+import Categories from './screens/Categories';
+import Suppliers from './screens/Suppliers';
+import Orders from './screens/Orders';
+import Settings from './screens/Settings';
+import ProductDetails from './screens/ProductDetails';
+import AddProduct from './screens/AddProduct';
+import EditProduct from './screens/EditProduct';
 
 function App() {
   return (
@@ -53,6 +61,9 @@ function App() {
           
           {/* Product Page Routes (9.0 to 9.4) */}
           <Route path="product/:step" element={<ProductPage />} />
+          <Route path="product-details/:id" element={<ProductDetails />} />
+          <Route path="add-product" element={<AddProduct />} />
+          <Route path="edit-product/:id" element={<EditProduct />} />
           
           {/* Sales Routes (10.0 to 10.5) */}
           <Route path="sales/:step" element={<Sales />} />
@@ -92,6 +103,13 @@ function App() {
           
           {/* Local Storage Viewer Route */}
           <Route path="local-storage" element={<LocalStorageViewer />} />
+
+          {/* Core app pages */}
+          <Route path="inventory" element={<InventoryList />} />
+          <Route path="categories" element={<Categories />} />
+          <Route path="suppliers" element={<Suppliers />} />
+          <Route path="orders" element={<Orders />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>
     </Box>
