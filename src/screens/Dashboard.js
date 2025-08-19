@@ -135,9 +135,16 @@ function Dashboard() {
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" component="h1">Dashboard</Typography>
-        <Button variant="contained" startIcon={<Add />}>
-          Add Product
-        </Button>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Chip
+            label={role === 'admin' ? '7.0 • Admin' : role === 'manager' ? '7.1 • Manager' : '7.2 • Staff'}
+            color={role === 'admin' ? 'primary' : role === 'manager' ? 'secondary' : 'default'}
+            variant="outlined"
+          />
+          <Button variant="contained" startIcon={<Add />}>
+            Add Product
+          </Button>
+        </Box>
       </Box>
 
       <Grid container spacing={3}>
