@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
   Grid,
@@ -30,7 +31,7 @@ import {
   InsertChart,
   ArrowCircleRight,
 } from '@mui/icons-material';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
+// Charts removed in mobile role-specific UI to match provided designs
 
 const MetricCard = ({ title, value, valueColor = 'text.primary' }) => (
   <Card sx={{ borderRadius: 3 }}>
@@ -41,8 +42,8 @@ const MetricCard = ({ title, value, valueColor = 'text.primary' }) => (
   </Card>
 );
 
-const ActionCard = ({ primary, icon, highlighted = false }) => (
-  <Card sx={{ borderRadius: 3, bgcolor: highlighted ? '#1976d2' : 'background.paper' }}>
+const ActionCard = ({ primary, icon, highlighted = false, onClick }) => (
+  <Card onClick={onClick} sx={{ borderRadius: 3, bgcolor: highlighted ? '#1976d2' : 'background.paper', cursor: 'pointer' }}>
     <CardContent sx={{ textAlign: 'center', py: 3 }}>
       <Box sx={{
         width: 48, height: 48, borderRadius: '50%', mx: 'auto', mb: 1.5,
@@ -57,6 +58,8 @@ const ActionCard = ({ primary, icon, highlighted = false }) => (
 );
 
 function Dashboard() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [pending, setPending] = useState([]);
   const currentUser = useMemo(() => {
     try { return JSON.parse(localStorage.getItem('currentUser') || 'null'); } catch { return null; }
@@ -93,13 +96,21 @@ function Dashboard() {
 
   const role = currentUser?.role || 'admin';
 
+  const navValue = useMemo(() => {
+    const path = location.pathname;
+    if (path.startsWith('/dashboard/scan-product')) return 'scan';
+    if (path.startsWith('/dashboard/product')) return 'products';
+    if (path.startsWith('/dashboard/sales')) return 'sales';
+    return 'home';
+  }, [location.pathname]);
+
   return (
     <Box>
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Typography variant="h6">Dashboard</Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Chip icon={<CloudDone sx={{ color: 'success.main !important' }} />} label="Synced" size="small" sx={{ bgcolor: 'success.soft', color: 'success.main' }} />
+          <Chip icon={<CloudDone sx={{ color: 'success.main !important' }} />} label="Synced" size="small" sx={{ bgcolor: 'success.light', color: 'success.main' }} />
         </Box>
       </Box>
 
@@ -128,7 +139,7 @@ function Dashboard() {
 
       {/* Alerts / Sales Cards */}
       {role === 'admin' && (
-        <Card sx={{ borderRadius: 3, bgcolor: 'error.light', color: 'error.dark', mb: 2 }}>
+        <Card onClick={() => navigate('/dashboard/inventory')} sx={{ borderRadius: 3, bgcolor: 'error.light', color: 'error.dark', mb: 2, cursor: 'pointer' }}>
           <CardContent sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
               <Box sx={{ width: 36, height: 36, borderRadius: '50%', bgcolor: 'error.main', color: 'common.white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -144,7 +155,7 @@ function Dashboard() {
         </Card>
       )}
 
-      <Card sx={{ borderRadius: 3, mb: 2 }}>
+      <Card onClick={() => navigate('/dashboard/sales/0')} sx={{ borderRadius: 3, mb: 2, cursor: 'pointer' }}>
         <CardContent sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             <Box sx={{ width: 36, height: 36, borderRadius: '50%', bgcolor: 'action.hover', color: 'text.primary', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -163,18 +174,18 @@ function Dashboard() {
       <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>Quick Actions</Typography>
       <Grid container spacing={2} sx={{ mb: 2 }}>
         <Grid item xs={6}>
-          <ActionCard primary="Add Stock" icon={<AddCircleOutline color="primary" />} />
+          <ActionCard primary="Add Stock" icon={<AddCircleOutline color="primary" />} onClick={() => navigate('/dashboard/add-product')} />
         </Grid>
         <Grid item xs={6}>
-          <ActionCard primary="Sell" icon={<ArrowCircleRight sx={{ color: 'common.white' }} />} highlighted />
+          <ActionCard primary="Sell" icon={<ArrowCircleRight sx={{ color: 'common.white' }} />} highlighted onClick={() => navigate('/dashboard/sales/0')} />
         </Grid>
         {(role === 'admin' || role === 'manager') && (
           <>
             <Grid item xs={6}>
-              <ActionCard primary="Update Price" icon={<PriceChange color="primary" />} />
+              <ActionCard primary="Update Price" icon={<PriceChange color="primary" />} onClick={() => navigate('/dashboard/product/0')} />
             </Grid>
             <Grid item xs={6}>
-              <ActionCard primary="Report" icon={<InsertChart color="primary" />} />
+              <ActionCard primary="Report" icon={<InsertChart color="primary" />} onClick={() => navigate('/dashboard/reports')} />
             </Grid>
           </>
         )}
@@ -207,11 +218,16 @@ function Dashboard() {
 
       {/* Bottom Navigation */}
       <Paper sx={{ position: 'sticky', bottom: 0, left: 0, right: 0, borderRadius: 3 }} elevation={1}>
-        <BottomNavigation showLabels value={0}>
-          <BottomNavigationAction label="Home" icon={<Home />} />
-          <BottomNavigationAction label="Scan" icon={<QrCodeScanner />} />
-          <BottomNavigationAction label="Products" icon={<Storefront />} />
-          <BottomNavigationAction label="Sales" icon={<ShowChart />} />
+        <BottomNavigation showLabels value={navValue} onChange={(_, value) => {
+          if (value === 'home') navigate('/dashboard');
+          if (value === 'scan') navigate('/dashboard/scan-product/0');
+          if (value === 'products') navigate('/dashboard/product/0');
+          if (value === 'sales') navigate('/dashboard/sales/0');
+        }}>
+          <BottomNavigationAction value="home" label="Home" icon={<Home />} />
+          <BottomNavigationAction value="scan" label="Scan" icon={<QrCodeScanner />} />
+          <BottomNavigationAction value="products" label="Products" icon={<Storefront />} />
+          <BottomNavigationAction value="sales" label="Sales" icon={<ShowChart />} />
         </BottomNavigation>
       </Paper>
     </Box>
