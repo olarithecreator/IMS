@@ -92,6 +92,19 @@ function Layout() {
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             Inventory Management System
           </Typography>
+          {/* Role pill */}
+          <Box sx={{ display: { xs: 'none', sm: 'block' }, mr: 2 }}>
+            {(() => {
+              try {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+                if (!currentUser?.role) return null;
+                const colorMap = { admin: 'primary', manager: 'secondary', staff: 'default' };
+                return (
+                  <Chip label={currentUser.role.toUpperCase()} color={colorMap[currentUser.role] || 'default'} />
+                );
+              } catch (_) { return null; }
+            })()}
+          </Box>
           <IconButton color="inherit">
             <Search />
           </IconButton>

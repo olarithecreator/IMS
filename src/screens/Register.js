@@ -79,7 +79,7 @@ function Register() {
       return;
     }
 
-    // Store user data in localStorage
+    // Prepare user data
     const newUser = {
       id: Date.now(),
       firstName: formData.firstName,
@@ -89,9 +89,50 @@ function Register() {
       company: formData.company,
       phone: formData.phone,
       role: formData.role,
+      isApproved: formData.role === 'admin',
       createdAt: new Date().toISOString()
     };
 
+    // Companies store: [{ id, name, ownerEmail, users: [{ email, role, approved }], pending: [{ email, role }] }]
+    const companies = JSON.parse(localStorage.getItem('companies') || '[]');
+    const findCompanyByName = (name) => companies.find(c => c.name.toLowerCase() === String(name || '').toLowerCase());
+
+    if (newUser.role === 'admin') {
+      // Admin must create a new company
+      if (!newUser.company || !newUser.company.trim()) {
+        setError('Company name is required for admin accounts');
+        return;
+      }
+      const existingCompany = findCompanyByName(newUser.company);
+      if (existingCompany) {
+        setError('A company with this name already exists. Choose a different name or register as manager/staff to join it.');
+        return;
+      }
+      const company = {
+        id: Date.now(),
+        name: newUser.company,
+        ownerEmail: newUser.email,
+        users: [{ email: newUser.email, role: 'admin', approved: true }],
+        pending: []
+      };
+      companies.push(company);
+    } else {
+      // Manager/Staff must join an existing company
+      const company = findCompanyByName(newUser.company);
+      if (!company) {
+        setError('Company not found. Please enter an existing company name or ask your admin.');
+        return;
+      }
+      // Add to pending requests if not already pending/approved
+      const alreadyApproved = company.users.some(u => u.email === newUser.email);
+      const alreadyPending = company.pending.some(p => p.email === newUser.email);
+      if (!alreadyApproved && !alreadyPending) {
+        company.pending.push({ email: newUser.email, role: newUser.role });
+      }
+    }
+
+    // Persist companies and users
+    localStorage.setItem('companies', JSON.stringify(companies));
     existingUsers.push(newUser);
     localStorage.setItem('users', JSON.stringify(existingUsers));
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import {
   Box,
   Grid,
@@ -95,19 +95,53 @@ const StatCard = ({ title, value, change, icon, color }) => (
 );
 
 function Dashboard() {
+  const [pending, setPending] = useState([]);
+  const currentUser = useMemo(() => {
+    try { return JSON.parse(localStorage.getItem('currentUser') || 'null'); } catch { return null; }
+  }, []);
+
+  useEffect(() => {
+    if (currentUser?.role === 'admin' && currentUser?.company) {
+      const companies = JSON.parse(localStorage.getItem('companies') || '[]');
+      const company = companies.find(c => c.name.toLowerCase() === String(currentUser.company).toLowerCase());
+      setPending(company?.pending || []);
+    }
+  }, [currentUser]);
+
+  const approveUser = (email) => {
+    const companies = JSON.parse(localStorage.getItem('companies') || '[]');
+    const company = companies.find(c => c.name.toLowerCase() === String(currentUser.company).toLowerCase());
+    if (!company) return;
+    company.pending = (company.pending || []).filter(p => p.email !== email);
+    company.users = company.users || [];
+    const role = 'manager';
+    company.users.push({ email, role, approved: true });
+    localStorage.setItem('companies', JSON.stringify(companies));
+    setPending(company.pending);
+  };
+
+  const denyUser = (email) => {
+    const companies = JSON.parse(localStorage.getItem('companies') || '[]');
+    const company = companies.find(c => c.name.toLowerCase() === String(currentUser.company).toLowerCase());
+    if (!company) return;
+    company.pending = (company.pending || []).filter(p => p.email !== email);
+    localStorage.setItem('companies', JSON.stringify(companies));
+    setPending(company.pending);
+  };
+
+  const role = currentUser?.role || 'admin';
+
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" component="h1">
-          Dashboard
-        </Typography>
+        <Typography variant="h4" component="h1">Dashboard</Typography>
         <Button variant="contained" startIcon={<Add />}>
           Add Product
         </Button>
       </Box>
 
       <Grid container spacing={3}>
-        {/* Statistics Cards */}
+        {/* Statistics Cards - vary by role */}
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             title="Total Products"
@@ -117,6 +151,7 @@ function Dashboard() {
             color="#1976d2"
           />
         </Grid>
+        {role !== 'staff' && (
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             title="Total Orders"
@@ -126,6 +161,7 @@ function Dashboard() {
             color="#2e7d32"
           />
         </Grid>
+        )}
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             title="Suppliers"
@@ -135,6 +171,7 @@ function Dashboard() {
             color="#ed6c02"
           />
         </Grid>
+        {role === 'admin' && (
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             title="Low Stock Items"
@@ -144,9 +181,10 @@ function Dashboard() {
             color="#d32f2f"
           />
         </Grid>
+        )}
 
-        {/* Charts */}
-        <Grid item xs={12} md={8}>
+        {/* Charts: show sales overview for admin/manager; staff sees only bar chart */}
+        <Grid item xs={12} md={role === 'staff' ? 12 : 8}>
           <Paper sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
               Sales Overview
@@ -162,7 +200,7 @@ function Dashboard() {
             </ResponsiveContainer>
           </Paper>
         </Grid>
-
+        {role !== 'staff' && (
         <Grid item xs={12} md={4}>
           <Paper sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
@@ -189,9 +227,10 @@ function Dashboard() {
             </ResponsiveContainer>
           </Paper>
         </Grid>
+        )}
 
         {/* Recent Activity */}
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={role === 'staff' ? 12 : 6}>
           <Paper sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
               Recent Activity
@@ -215,13 +254,14 @@ function Dashboard() {
           </Paper>
         </Grid>
 
-        {/* Quick Actions */}
-        <Grid item xs={12} md={6}>
+        {/* Quick Actions - scope by role */}
+        <Grid item xs={12} md={role === 'staff' ? 12 : 6}>
           <Paper sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
               Quick Actions
             </Typography>
             <Grid container spacing={2}>
+              {(role === 'admin' || role === 'manager') && (
               <Grid item xs={6}>
                 <Button
                   variant="outlined"
@@ -232,6 +272,7 @@ function Dashboard() {
                   Add Product
                 </Button>
               </Grid>
+              )}
               <Grid item xs={6}>
                 <Button
                   variant="outlined"
@@ -242,6 +283,7 @@ function Dashboard() {
                   Create Order
                 </Button>
               </Grid>
+              {(role === 'admin' || role === 'manager') && (
               <Grid item xs={6}>
                 <Button
                   variant="outlined"
@@ -252,6 +294,8 @@ function Dashboard() {
                   Add Supplier
                 </Button>
               </Grid>
+              )}
+              {role !== 'staff' && (
               <Grid item xs={6}>
                 <Button
                   variant="outlined"
@@ -262,9 +306,37 @@ function Dashboard() {
                   View Reports
                 </Button>
               </Grid>
+              )}
             </Grid>
           </Paper>
         </Grid>
+
+        {/* Admin Approvals */}
+        {role === 'admin' && (
+        <Grid item xs={12}>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Pending Team Approvals
+            </Typography>
+            {pending.length === 0 ? (
+              <Typography variant="body2" color="text.secondary">No pending requests.</Typography>
+            ) : (
+              <List>
+                {pending.map((p) => (
+                  <ListItem key={p.email} divider secondaryAction={
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <Button size="small" variant="contained" onClick={() => approveUser(p.email)}>Approve</Button>
+                      <Button size="small" variant="outlined" color="error" onClick={() => denyUser(p.email)}>Deny</Button>
+                    </Box>
+                  }>
+                    <ListItemText primary={p.email} secondary={`Requested role: ${p.role}`} />
+                  </ListItem>
+                ))}
+              </List>
+            )}
+          </Paper>
+        </Grid>
+        )}
       </Grid>
     </Box>
   );

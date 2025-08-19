@@ -49,6 +49,17 @@ function Login() {
     const user = users.find(u => u.email === formData.email && u.password === formData.password);
     
     if (user) {
+      // Approval check for non-admins
+      if (user.role !== 'admin') {
+        const companies = JSON.parse(localStorage.getItem('companies') || '[]');
+        const company = companies.find(c => c.name.toLowerCase() === String(user.company || '').toLowerCase());
+        const approved = company?.users?.some(u => u.email === user.email);
+        if (!approved) {
+          setError('Your account is pending approval by your company admin.');
+          return;
+        }
+      }
+
       // Store user info and authentication status
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('currentUser', JSON.stringify({
