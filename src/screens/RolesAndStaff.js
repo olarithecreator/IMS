@@ -304,7 +304,7 @@ const RolesAndStaff = () => {
         <Button
           variant="contained"
           startIcon={<PersonAdd />}
-          onClick={() => handleDialogOpen('addStaff')}
+          onClick={() => navigate('/dashboard/roles-staff/add')}
         >
           Add Staff Member
         </Button>

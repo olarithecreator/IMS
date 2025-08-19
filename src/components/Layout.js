@@ -34,6 +34,8 @@ import {
   Add,
   Search,
   Storage,
+  Help as HelpIcon,
+  Logout as LogoutIcon,
 } from '@mui/icons-material';
 
 const drawerWidth = 240;
@@ -189,44 +191,69 @@ function Layout() {
   );
 
   function DrawerContent() {
-    return (
-      <Box>
-        <Toolbar>
-          <Typography variant="h6" noWrap component="div">
-            IMS
-          </Typography>
-          <IconButton onClick={handleDrawerToggle}>
-            <ChevronLeft />
-          </IconButton>
-        </Toolbar>
-        <Divider />
-        <List>
-          {menuItems.map((item) => (
-            <ListItem key={item.text} disablePadding>
-              <ListItemButton
-                selected={location.pathname === item.path}
-                onClick={() => handleNavigation(item.path)}
-              >
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          <ListItem disablePadding>
-            <ListItemButton onClick={() => handleNavigation('/dashboard/add-product')}>
-              <ListItemIcon>
-                <Add />
-              </ListItemIcon>
-              <ListItemText primary="Add Product" />
-            </ListItemButton>
-          </ListItem>
-        </List>
-      </Box>
-    );
-  }
+	return (
+		<Box>
+			<Toolbar>
+				<Typography variant="h6" noWrap component="div">
+					IMS
+				</Typography>
+				<IconButton onClick={handleDrawerToggle}>
+					<ChevronLeft />
+				</IconButton>
+			</Toolbar>
+			<Divider />
+			{/* Stores row */}
+			<Box sx={{ display: 'flex', gap: 2, p: 2, alignItems: 'center', overflowX: 'auto' }}>
+				<Avatar sx={{ bgcolor: 'primary.light', border: '2px solid', borderColor: 'primary.main' }}>1</Avatar>
+				<Avatar sx={{ bgcolor: 'success.light' }}>2</Avatar>
+				<Avatar sx={{ bgcolor: 'action.hover' }}>+
+				</Avatar>
+			</Box>
+			<Divider />
+			<List>
+				<ListItem disablePadding>
+					<ListItemButton onClick={() => handleNavigation('/dashboard/profile')}>
+						<ListItemIcon><Storage /></ListItemIcon>
+						<ListItemText primary="My Store/Profile" />
+					</ListItemButton>
+				</ListItem>
+				<ListItem disablePadding>
+					<ListItemButton onClick={() => handleNavigation('/dashboard/roles-staff')}>
+						<ListItemIcon><People /></ListItemIcon>
+						<ListItemText primary="Roles & Staff" />
+					</ListItemButton>
+				</ListItem>
+				<ListItem disablePadding>
+					<ListItemButton onClick={() => handleNavigation('/dashboard/help-support')}>
+						<ListItemIcon><HelpIcon /></ListItemIcon>
+						<ListItemText primary="Help & Support" />
+					</ListItemButton>
+				</ListItem>
+				<ListItem disablePadding>
+					<ListItemButton onClick={() => handleNavigation('/dashboard/orders')}>
+						<ListItemIcon><Notifications /></ListItemIcon>
+						<ListItemText primary="Activities" />
+					</ListItemButton>
+				</ListItem>
+				<ListItem disablePadding>
+					<ListItemButton onClick={() => handleNavigation('/dashboard/settings')}>
+						<ListItemIcon><Settings /></ListItemIcon>
+						<ListItemText primary="Settings" />
+					</ListItemButton>
+				</ListItem>
+			</List>
+			<Divider />
+			<List>
+				<ListItem disablePadding>
+					<ListItemButton onClick={() => handleNavigation('/logout')}>
+						<ListItemIcon><LogoutIcon /></ListItemIcon>
+						<ListItemText primary="Log out" />
+					</ListItemButton>
+				</ListItem>
+			</List>
+		</Box>
+	);
+}
 }
 
 export default Layout; 

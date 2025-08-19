@@ -26,6 +26,9 @@ import Categories from './screens/Categories';
 import Suppliers from './screens/Suppliers';
 import Orders from './screens/Orders';
 import Settings from './screens/Settings';
+import AddStaff from './screens/AddStaff';
+import ConfirmInvite from './screens/ConfirmInvite';
+import StaffPinLogin from './screens/StaffPinLogin';
 import ProductDetails from './screens/ProductDetails';
 import AddProduct from './screens/AddProduct';
 import EditProduct from './screens/EditProduct';
@@ -81,6 +84,9 @@ function App() {
           {/* Roles and Staff Routes (14 to 15.2) */}
           <Route path="roles-staff/:step" element={<RolesAndStaff />} />
           <Route path="roles-staff" element={<RolesAndStaff />} />
+          <Route path="roles-staff/add" element={<AddStaff />} />
+          <Route path="confirm-invite" element={<ConfirmInvite />} />
+          <Route path="staff-login" element={<StaffPinLogin />} />
           
           {/* Help and Support Routes (16 to 17) */}
           <Route path="help-support/:step" element={<HelpAndSupport />} />
