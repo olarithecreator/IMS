@@ -19,7 +19,7 @@ import {
   Email,
   CheckCircle,
   ArrowForward,
-  Resend,
+  Replay,
   Timer,
   Lock
 } from '@mui/icons-material';
@@ -214,7 +214,7 @@ const Verification = () => {
             variant="text"
             onClick={handleResend}
             disabled={!canResend}
-            startIcon={canResend ? <Resend /> : <Timer />}
+            startIcon={canResend ? <Replay /> : <Timer />}
             sx={{ minWidth: 150 }}
           >
             {canResend ? 'Resend Code' : `Resend in ${countdown}s`}
