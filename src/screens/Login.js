@@ -66,10 +66,9 @@ function Login() {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component="main" maxWidth="sm" sx={{ py: { xs: 4, sm: 8 } }}>
       <Box
         sx={{
-          marginTop: 8,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -78,18 +77,19 @@ function Login() {
         <Paper
           elevation={3}
           sx={{
-            padding: 4,
+            p: { xs: 2, sm: 4 },
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             width: '100%',
+            borderRadius: 3,
           }}
         >
-          <Typography component="h1" variant="h4" gutterBottom>
+          <Typography component="h1" sx={{ typography: { xs: 'h5', sm: 'h4' } }} gutterBottom>
             Inventory Management System
           </Typography>
-          <Typography component="h2" variant="h6" color="textSecondary" gutterBottom>
-            Sign In
+          <Typography component="h2" sx={{ typography: { xs: 'subtitle1', sm: 'h6' } }} color="textSecondary" gutterBottom>
+            Sign in to continue
           </Typography>
 
           {error && (
@@ -148,11 +148,17 @@ function Login() {
                 ),
               }}
             />
+            <Box sx={{ width: '100%', textAlign: 'right', mt: 1 }}>
+              <Link to="/dashboard/forgot-password" style={{ textDecoration: 'none' }}>
+                <Typography variant="body2" color="primary">Forgot password?</Typography>
+              </Link>
+            </Box>
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              size="large"
+              sx={{ mt: 3, mb: 2, py: { xs: 1, sm: 1.25 } }}
             >
               Sign In
             </Button>
