@@ -6,90 +6,52 @@ import {
   Typography,
   Card,
   CardContent,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
   Chip,
   Button,
+  BottomNavigation,
+  BottomNavigationAction,
+  Divider,
 } from '@mui/material';
 import {
-  TrendingUp,
-  TrendingDown,
   Inventory,
   ShoppingCart,
-  People,
   Warning,
-  CheckCircle,
-  Error,
   Add,
+  ChevronRight,
+  AttachMoney,
+  MonetizationOn,
+  Home,
+  QrCodeScanner,
+  Storefront,
+  ShowChart,
+  CloudDone,
+  AddCircleOutline,
+  PriceChange,
+  InsertChart,
+  ArrowCircleRight,
 } from '@mui/icons-material';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 
-const data = [
-  { name: 'Jan', value: 400 },
-  { name: 'Feb', value: 300 },
-  { name: 'Mar', value: 600 },
-  { name: 'Apr', value: 800 },
-  { name: 'May', value: 500 },
-  { name: 'Jun', value: 700 },
-];
-
-const pieData = [
-  { name: 'Electronics', value: 400, color: '#8884d8' },
-  { name: 'Clothing', value: 300, color: '#82ca9d' },
-  { name: 'Books', value: 200, color: '#ffc658' },
-  { name: 'Others', value: 100, color: '#ff7300' },
-];
-
-const recentActivities = [
-  { id: 1, action: 'Product added', item: 'iPhone 13', time: '2 minutes ago', type: 'success' },
-  { id: 2, action: 'Order placed', item: 'Order #1234', time: '5 minutes ago', type: 'info' },
-  { id: 3, action: 'Low stock alert', item: 'Samsung TV', time: '10 minutes ago', type: 'warning' },
-  { id: 4, action: 'Product updated', item: 'MacBook Pro', time: '15 minutes ago', type: 'success' },
-  { id: 5, action: 'Supplier added', item: 'TechCorp Inc', time: '1 hour ago', type: 'info' },
-];
-
-const StatCard = ({ title, value, change, icon, color }) => (
-  <Card>
+const MetricCard = ({ title, value, valueColor = 'text.primary' }) => (
+  <Card sx={{ borderRadius: 3 }}>
     <CardContent>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Box>
-          <Typography color="textSecondary" gutterBottom variant="h6">
-            {title}
-          </Typography>
-          <Typography variant="h4" component="div">
-            {value}
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-            {change > 0 ? (
-              <TrendingUp sx={{ color: 'success.main', fontSize: 16 }} />
-            ) : (
-              <TrendingDown sx={{ color: 'error.main', fontSize: 16 }} />
-            )}
-            <Typography
-              variant="body2"
-              color={change > 0 ? 'success.main' : 'error.main'}
-              sx={{ ml: 0.5 }}
-            >
-              {Math.abs(change)}% from last month
-            </Typography>
-          </Box>
-        </Box>
-        <Box
-          sx={{
-            backgroundColor: color,
-            borderRadius: '50%',
-            width: 56,
-            height: 56,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          {icon}
-        </Box>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>{title}</Typography>
+      <Typography variant="h4" sx={{ fontWeight: 700, color: valueColor }}>{value}</Typography>
+    </CardContent>
+  </Card>
+);
+
+const ActionCard = ({ primary, icon, highlighted = false }) => (
+  <Card sx={{ borderRadius: 3, bgcolor: highlighted ? '#1976d2' : 'background.paper' }}>
+    <CardContent sx={{ textAlign: 'center', py: 3 }}>
+      <Box sx={{
+        width: 48, height: 48, borderRadius: '50%', mx: 'auto', mb: 1.5,
+        bgcolor: highlighted ? 'rgba(255,255,255,0.2)' : 'action.hover',
+        display: 'flex', alignItems: 'center', justifyContent: 'center'
+      }}>
+        {icon}
       </Box>
+      <Typography sx={{ color: highlighted ? 'common.white' : 'text.primary', fontWeight: 500 }}>{primary}</Typography>
     </CardContent>
   </Card>
 );
@@ -133,218 +95,125 @@ function Dashboard() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" component="h1">Dashboard</Typography>
+      {/* Header */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="h6">Dashboard</Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Chip
-            label={role === 'admin' ? '7.0 • Admin' : role === 'manager' ? '7.1 • Manager' : '7.2 • Staff'}
-            color={role === 'admin' ? 'primary' : role === 'manager' ? 'secondary' : 'default'}
-            variant="outlined"
-          />
-          <Button variant="contained" startIcon={<Add />}>
-            Add Product
-          </Button>
+          <Chip icon={<CloudDone sx={{ color: 'success.main !important' }} />} label="Synced" size="small" sx={{ bgcolor: 'success.soft', color: 'success.main' }} />
         </Box>
       </Box>
 
-      <Grid container spacing={3}>
-        {/* Statistics Cards - vary by role */}
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Total Products"
-            value="1,234"
-            change={12}
-            icon={<Inventory sx={{ color: 'white' }} />}
-            color="#1976d2"
-          />
-        </Grid>
-        {role !== 'staff' && (
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Total Orders"
-            value="567"
-            change={-5}
-            icon={<ShoppingCart sx={{ color: 'white' }} />}
-            color="#2e7d32"
-          />
-        </Grid>
-        )}
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Suppliers"
-            value="89"
-            change={8}
-            icon={<People sx={{ color: 'white' }} />}
-            color="#ed6c02"
-          />
-        </Grid>
-        {role === 'admin' && (
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Low Stock Items"
-            value="23"
-            change={-15}
-            icon={<Warning sx={{ color: 'white' }} />}
-            color="#d32f2f"
-          />
-        </Grid>
-        )}
+      {/* Welcome + Role */}
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+        <Box>
+          <Typography sx={{ typography: { xs: 'h5', sm: 'h4' }, fontWeight: 800 }}>Welcome Back!</Typography>
+          <Typography variant="body2" color="text.secondary">{role === 'admin' ? "Here's your inventory snapshot." : 'Inventory Overview.'}</Typography>
+        </Box>
+        <Chip label={role === 'admin' ? 'Owner' : role === 'manager' ? 'Manager' : 'Sales Clerk'} color={role === 'admin' ? 'warning' : role === 'manager' ? 'secondary' : 'default'} sx={{ fontWeight: 600 }} />
+      </Box>
 
-        {/* Charts: show sales overview for admin/manager; staff sees only bar chart */}
-        <Grid item xs={12} md={role === 'staff' ? 12 : 8}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Sales Overview
-            </Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="value" fill="#1976d2" />
-              </BarChart>
-            </ResponsiveContainer>
-          </Paper>
+      {/* Metrics */}
+      <Grid container spacing={2} sx={{ mb: 2 }}>
+        <Grid item xs={6}>
+          <MetricCard title="Total Stock" value="1,250" />
         </Grid>
-        {role !== 'staff' && (
-        <Grid item xs={12} md={4}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Category Distribution
-            </Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {pieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </Paper>
+        <Grid item xs={6}>
+          {role === 'admin' ? (
+            <MetricCard title="Total Value" value={"₦500,000"} />
+          ) : (
+            <MetricCard title="Low Stock" value={"25"} valueColor="error.main" />
+          )}
         </Grid>
-        )}
+      </Grid>
 
-        {/* Recent Activity */}
-        <Grid item xs={12} md={role === 'staff' ? 12 : 6}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Recent Activity
-            </Typography>
-            <List>
-              {recentActivities.map((activity) => (
-                <ListItem key={activity.id} divider>
-                  <ListItemIcon>
-                    {activity.type === 'success' && <CheckCircle color="success" />}
-                    {activity.type === 'warning' && <Warning color="warning" />}
-                    {activity.type === 'info' && <ShoppingCart color="info" />}
-                    {activity.type === 'error' && <Error color="error" />}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={activity.action}
-                    secondary={`${activity.item} • ${activity.time}`}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          </Paper>
-        </Grid>
+      {/* Alerts / Sales Cards */}
+      {role === 'admin' && (
+        <Card sx={{ borderRadius: 3, bgcolor: 'error.light', color: 'error.dark', mb: 2 }}>
+          <CardContent sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <Box sx={{ width: 36, height: 36, borderRadius: '50%', bgcolor: 'error.main', color: 'common.white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Warning />
+              </Box>
+              <Box>
+                <Typography sx={{ fontWeight: 700 }}>Low Stock Alert</Typography>
+                <Typography variant="body2">25 items are running low</Typography>
+              </Box>
+            </Box>
+            <ChevronRight />
+          </CardContent>
+        </Card>
+      )}
 
-        {/* Quick Actions - scope by role */}
-        <Grid item xs={12} md={role === 'staff' ? 12 : 6}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Quick Actions
-            </Typography>
-            <Grid container spacing={2}>
-              {(role === 'admin' || role === 'manager') && (
-              <Grid item xs={6}>
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  startIcon={<Add />}
-                  sx={{ height: 56 }}
-                >
-                  Add Product
-                </Button>
-              </Grid>
-              )}
-              <Grid item xs={6}>
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  startIcon={<ShoppingCart />}
-                  sx={{ height: 56 }}
-                >
-                  Create Order
-                </Button>
-              </Grid>
-              {(role === 'admin' || role === 'manager') && (
-              <Grid item xs={6}>
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  startIcon={<People />}
-                  sx={{ height: 56 }}
-                >
-                  Add Supplier
-                </Button>
-              </Grid>
-              )}
-              {role !== 'staff' && (
-              <Grid item xs={6}>
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  startIcon={<Inventory />}
-                  sx={{ height: 56 }}
-                >
-                  View Reports
-                </Button>
-              </Grid>
-              )}
+      <Card sx={{ borderRadius: 3, mb: 2 }}>
+        <CardContent sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <Box sx={{ width: 36, height: 36, borderRadius: '50%', bgcolor: 'action.hover', color: 'text.primary', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <AttachMoney />
+            </Box>
+            <Box>
+              <Typography sx={{ fontWeight: 700 }}>Total Sales Today</Typography>
+              <Typography variant="body2" color="text.secondary">250 sales • ₦75,300</Typography>
+            </Box>
+          </Box>
+          <ChevronRight />
+        </CardContent>
+      </Card>
+
+      {/* Quick Actions */}
+      <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>Quick Actions</Typography>
+      <Grid container spacing={2} sx={{ mb: 2 }}>
+        <Grid item xs={6}>
+          <ActionCard primary="Add Stock" icon={<AddCircleOutline color="primary" />} />
+        </Grid>
+        <Grid item xs={6}>
+          <ActionCard primary="Sell" icon={<ArrowCircleRight sx={{ color: 'common.white' }} />} highlighted />
+        </Grid>
+        {(role === 'admin' || role === 'manager') && (
+          <>
+            <Grid item xs={6}>
+              <ActionCard primary="Update Price" icon={<PriceChange color="primary" />} />
             </Grid>
-          </Paper>
-        </Grid>
-
-        {/* Admin Approvals */}
-        {role === 'admin' && (
-        <Grid item xs={12}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Pending Team Approvals
-            </Typography>
-            {pending.length === 0 ? (
-              <Typography variant="body2" color="text.secondary">No pending requests.</Typography>
-            ) : (
-              <List>
-                {pending.map((p) => (
-                  <ListItem key={p.email} divider secondaryAction={
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                      <Button size="small" variant="contained" onClick={() => approveUser(p.email)}>Approve</Button>
-                      <Button size="small" variant="outlined" color="error" onClick={() => denyUser(p.email)}>Deny</Button>
-                    </Box>
-                  }>
-                    <ListItemText primary={p.email} secondary={`Requested role: ${p.role}`} />
-                  </ListItem>
-                ))}
-              </List>
-            )}
-          </Paper>
-        </Grid>
+            <Grid item xs={6}>
+              <ActionCard primary="Report" icon={<InsertChart color="primary" />} />
+            </Grid>
+          </>
         )}
       </Grid>
+
+      {/* Admin Approvals section retained but moved below actions */}
+      {role === 'admin' && (
+        <Paper sx={{ p: 2, borderRadius: 3, mb: 2 }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>Pending Team Approvals</Typography>
+          {pending.length === 0 ? (
+            <Typography variant="body2" color="text.secondary">No pending requests.</Typography>
+          ) : (
+            pending.map((p) => (
+              <Box key={p.email} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 1.5 }}>
+                <Box>
+                  <Typography sx={{ fontWeight: 600 }}>{p.email}</Typography>
+                  <Typography variant="body2" color="text.secondary">Requested role: {p.role}</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <Button size="small" variant="contained" onClick={() => approveUser(p.email)}>Approve</Button>
+                  <Button size="small" variant="outlined" color="error" onClick={() => denyUser(p.email)}>Deny</Button>
+                </Box>
+              </Box>
+            ))
+          )}
+        </Paper>
+      )}
+
+      <Divider sx={{ my: 2 }} />
+
+      {/* Bottom Navigation */}
+      <Paper sx={{ position: 'sticky', bottom: 0, left: 0, right: 0, borderRadius: 3 }} elevation={1}>
+        <BottomNavigation showLabels value={0}>
+          <BottomNavigationAction label="Home" icon={<Home />} />
+          <BottomNavigationAction label="Scan" icon={<QrCodeScanner />} />
+          <BottomNavigationAction label="Products" icon={<Storefront />} />
+          <BottomNavigationAction label="Sales" icon={<ShowChart />} />
+        </BottomNavigation>
+      </Paper>
     </Box>
   );
 }
