@@ -71,6 +71,7 @@ const Onboarding = () => {
 
   const currentStepIndex = steps.findIndex(s => s.id === step);
   const currentStep = steps[currentStepIndex];
+  const totalSteps = steps.length;
 
   const handleNext = () => {
     if (currentStepIndex < steps.length - 1) {
@@ -96,39 +97,29 @@ const Onboarding = () => {
     switch (step) {
       case '1.0':
         return (
-          <Box textAlign="center" py={4}>
-            <Avatar sx={{ width: 80, height: 80, mx: 'auto', mb: 3, bgcolor: 'primary.main' }}>
-              <Store sx={{ fontSize: 40 }} />
+          <Box textAlign="center" py={{ xs: 3, sm: 4 }}>
+            <Avatar sx={{ width: { xs: 64, sm: 80 }, height: { xs: 64, sm: 80 }, mx: 'auto', mb: 3, bgcolor: 'primary.main' }}>
+              <Store sx={{ fontSize: { xs: 32, sm: 40 } }} />
             </Avatar>
-            <Typography variant="h3" gutterBottom color="primary">
+            <Typography sx={{ typography: { xs: 'h4', sm: 'h3' } }} gutterBottom color="primary">
               Welcome to IMS
             </Typography>
-            <Typography variant="h6" color="text.secondary" paragraph>
+            <Typography sx={{ typography: { xs: 'subtitle1', sm: 'h6' } }} color="text.secondary" paragraph>
               Your complete Inventory Management Solution
             </Typography>
             <Typography variant="body1" color="text.secondary" paragraph>
               Streamline your inventory, track sales, and grow your business with our powerful platform.
             </Typography>
             <Box mt={4}>
-              <Grid container spacing={3} justifyContent="center">
-                <Grid item>
-                  <Card sx={{ textAlign: 'center', p: 2 }}>
-                    <ShoppingCart sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
-                    <Typography variant="h6">Inventory Management</Typography>
-                  </Card>
-                </Grid>
-                <Grid item>
-                  <Card sx={{ textAlign: 'center', p: 2 }}>
-                    <Analytics sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
-                    <Typography variant="h6">Sales Analytics</Typography>
-                  </Card>
-                </Grid>
-                <Grid item>
-                  <Card sx={{ textAlign: 'center', p: 2 }}>
-                    <Security sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
-                    <Typography variant="h6">Secure & Reliable</Typography>
-                  </Card>
-                </Grid>
+              <Grid container spacing={2} justifyContent="center">
+                {[{ icon: <ShoppingCart />, title: 'Inventory Management' }, { icon: <Analytics />, title: 'Sales Analytics' }, { icon: <Security />, title: 'Secure & Reliable' }].map((item) => (
+                  <Grid item xs={12} sm={6} md={4} key={item.title}>
+                    <Card sx={{ textAlign: 'center', p: { xs: 1.5, sm: 2 } }}>
+                      {React.cloneElement(item.icon, { sx: { fontSize: { xs: 32, sm: 40 }, color: 'primary.main', mb: 1 } })}
+                      <Typography sx={{ typography: { xs: 'subtitle1', sm: 'h6' } }}>{item.title}</Typography>
+                    </Card>
+                  </Grid>
+                ))}
               </Grid>
             </Box>
           </Box>
@@ -136,14 +127,14 @@ const Onboarding = () => {
 
       case '1.1':
         return (
-          <Box py={4}>
+          <Box py={{ xs: 3, sm: 4 }}>
             <Typography variant="h4" gutterBottom>
               Tell us about your business
             </Typography>
             <Typography variant="body1" color="text.secondary" paragraph>
               This helps us customize your experience and provide relevant features.
             </Typography>
-            <Grid container spacing={3} mt={3}>
+            <Grid container spacing={{ xs: 2, sm: 3 }} mt={3}>
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
@@ -178,14 +169,14 @@ const Onboarding = () => {
 
       case '1.2':
         return (
-          <Box py={4}>
+          <Box py={{ xs: 3, sm: 4 }}>
             <Typography variant="h4" gutterBottom>
               What type of business do you run?
             </Typography>
             <Typography variant="body1" color="text.secondary" paragraph>
               Select the category that best describes your business.
             </Typography>
-            <Grid container spacing={3} mt={3}>
+            <Grid container spacing={{ xs: 2, sm: 3 }} mt={3}>
               {['Retail Store', 'E-commerce', 'Wholesale', 'Manufacturing', 'Restaurant', 'Service Business', 'Other'].map((type) => (
                 <Grid item xs={12} sm={6} md={4} key={type}>
                   <Card 
@@ -193,13 +184,14 @@ const Onboarding = () => {
                       cursor: 'pointer',
                       border: formData.businessType === type ? 2 : 1,
                       borderColor: formData.businessType === type ? 'primary.main' : 'divider',
-                      '&:hover': { borderColor: 'primary.main' }
+                      '&:hover': { borderColor: 'primary.main' },
+                      height: '100%'
                     }}
                     onClick={() => handleInputChange('businessType', type)}
                   >
-                    <CardContent sx={{ textAlign: 'center', py: 3 }}>
-                      <Business sx={{ fontSize: 40, color: 'primary.main', mb: 2 }} />
-                      <Typography variant="h6">{type}</Typography>
+                    <CardContent sx={{ textAlign: 'center', py: { xs: 2, sm: 3 } }}>
+                      <Business sx={{ fontSize: { xs: 32, sm: 40 }, color: 'primary.main', mb: 2 }} />
+                      <Typography sx={{ typography: { xs: 'subtitle1', sm: 'h6' } }}>{type}</Typography>
                     </CardContent>
                   </Card>
                 </Grid>
@@ -210,14 +202,14 @@ const Onboarding = () => {
 
       case '1.3':
         return (
-          <Box py={4}>
+          <Box py={{ xs: 3, sm: 4 }}>
             <Typography variant="h4" gutterBottom>
               Where is your business located?
             </Typography>
             <Typography variant="body1" color="text.secondary" paragraph>
               This helps us provide location-specific features and support.
             </Typography>
-            <Grid container spacing={3} mt={3}>
+            <Grid container spacing={{ xs: 2, sm: 3 }} mt={3}>
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
@@ -260,14 +252,14 @@ const Onboarding = () => {
 
       case '2.0':
         return (
-          <Box py={4}>
+          <Box py={{ xs: 3, sm: 4 }}>
             <Typography variant="h4" gutterBottom>
               What are your primary business goals?
             </Typography>
             <Typography variant="body1" color="text.secondary" paragraph>
               Select all that apply to help us prioritize features for you.
             </Typography>
-            <Grid container spacing={3} mt={3}>
+            <Grid container spacing={{ xs: 2, sm: 3 }} mt={3}>
               {[
                 'Increase sales and revenue',
                 'Reduce inventory costs',
@@ -300,14 +292,14 @@ const Onboarding = () => {
 
       case '2.1':
         return (
-          <Box py={4}>
+          <Box py={{ xs: 3, sm: 4 }}>
             <Typography variant="h4" gutterBottom>
               Which features are most important to you?
             </Typography>
             <Typography variant="body1" color="text.secondary" paragraph>
               Choose the features that will have the biggest impact on your business.
             </Typography>
-            <Grid container spacing={3} mt={3}>
+            <Grid container spacing={{ xs: 2, sm: 3 }} mt={3}>
               {[
                 'Real-time inventory tracking',
                 'Sales analytics and reporting',
@@ -341,14 +333,14 @@ const Onboarding = () => {
 
       case '2.2':
         return (
-          <Box py={4}>
+          <Box py={{ xs: 3, sm: 4 }}>
             <Typography variant="h4" gutterBottom>
               How many employees work in your business?
             </Typography>
             <Typography variant="body1" color="text.secondary" paragraph>
               This helps us determine the right plan and features for your team size.
             </Typography>
-            <Grid container spacing={3} mt={3}>
+            <Grid container spacing={{ xs: 2, sm: 3 }} mt={3}>
               <Grid item xs={12}>
                 <FormControl component="fieldset">
                   <RadioGroup
@@ -378,12 +370,12 @@ const Onboarding = () => {
 
       case '2.3':
         return (
-          <Box textAlign="center" py={4}>
-            <CheckCircle sx={{ fontSize: 80, color: 'success.main', mb: 3 }} />
-            <Typography variant="h3" gutterBottom color="success.main">
+          <Box textAlign="center" py={{ xs: 3, sm: 4 }}>
+            <CheckCircle sx={{ fontSize: { xs: 64, sm: 80 }, color: 'success.main', mb: 3 }} />
+            <Typography sx={{ typography: { xs: 'h4', sm: 'h3' } }} gutterBottom color="success.main">
               You're all set!
             </Typography>
-            <Typography variant="h6" color="text.secondary" paragraph>
+            <Typography sx={{ typography: { xs: 'subtitle1', sm: 'h6' } }} color="text.secondary" paragraph>
               We've gathered all the information we need to customize your IMS experience.
             </Typography>
             <Typography variant="body1" color="text.secondary" paragraph>
@@ -395,7 +387,7 @@ const Onboarding = () => {
                 size="large"
                 onClick={() => navigate('/register')}
                 endIcon={<ArrowForward />}
-                sx={{ px: 4, py: 1.5 }}
+                sx={{ px: { xs: 3, sm: 4 }, py: { xs: 1, sm: 1.5 } }}
               >
                 Create Your Account
               </Button>
@@ -409,20 +401,23 @@ const Onboarding = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
+    <Container maxWidth="md" sx={{ py: { xs: 3, sm: 4 } }}>
+      <Paper elevation={3} sx={{ p: { xs: 2, sm: 4 }, borderRadius: 3 }}>
         {/* Header */}
         <Box textAlign="center" mb={4}>
-          <Typography variant="h4" color="primary" gutterBottom>
+          <Typography sx={{ typography: { xs: 'h5', sm: 'h4' } }} color="primary" gutterBottom>
             {currentStep.title}
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {currentStep.description}
           </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1, display: { xs: 'block', sm: 'none' } }}>
+            Step {currentStepIndex + 1} of {totalSteps}
+          </Typography>
         </Box>
 
         {/* Stepper */}
-        <Box mb={4}>
+        <Box mb={4} sx={{ display: { xs: 'none', sm: 'block' } }}>
           <Stepper activeStep={currentStepIndex} alternativeLabel>
             {steps.map((stepItem) => (
               <Step key={stepItem.id}>
@@ -436,12 +431,13 @@ const Onboarding = () => {
         {renderStepContent()}
 
         {/* Navigation */}
-        <Box display="flex" justifyContent="space-between" mt={4}>
+        <Box display="flex" justifyContent="space-between" mt={4} sx={{ flexDirection: { xs: 'column', sm: 'row' }, gap: 2 }}>
           <Button
             variant="outlined"
             onClick={handleBack}
             disabled={currentStepIndex === 0}
             startIcon={<ArrowBack />}
+            sx={{ width: { xs: '100%', sm: 'auto' } }}
           >
             Back
           </Button>
@@ -449,6 +445,7 @@ const Onboarding = () => {
             variant="contained"
             onClick={handleNext}
             endIcon={currentStepIndex === steps.length - 1 ? null : <ArrowForward />}
+            sx={{ width: { xs: '100%', sm: 'auto' } }}
           >
             {currentStepIndex === steps.length - 1 ? 'Get Started' : 'Next'}
           </Button>
