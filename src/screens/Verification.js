@@ -111,9 +111,9 @@ const Verification = () => {
 
   if (success) {
     return (
-      <Container maxWidth="sm" sx={{ py: 8 }}>
-        <Paper elevation={3} sx={{ p: 4, borderRadius: 3, textAlign: 'center' }}>
-          <CheckCircle sx={{ fontSize: 80, color: 'success.main', mb: 3 }} />
+      <Container maxWidth="sm" sx={{ py: { xs: 4, sm: 8 } }}>
+        <Paper elevation={3} sx={{ p: { xs: 2, sm: 4 }, borderRadius: 3, textAlign: 'center' }}>
+          <CheckCircle sx={{ fontSize: { xs: 64, sm: 80 }, color: 'success.main', mb: 3 }} />
           <Typography variant="h4" gutterBottom color="success.main">
             Email Verified!
           </Typography>
@@ -127,12 +127,12 @@ const Verification = () => {
   }
 
   return (
-    <Container maxWidth="sm" sx={{ py: 8 }}>
-      <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
+    <Container maxWidth="sm" sx={{ py: { xs: 4, sm: 8 } }}>
+      <Paper elevation={3} sx={{ p: { xs: 2, sm: 4 }, borderRadius: 3 }}>
         {/* Header */}
         <Box textAlign="center" mb={4}>
-          <Avatar sx={{ width: 80, height: 80, mx: 'auto', mb: 3, bgcolor: 'primary.main' }}>
-            <Email sx={{ fontSize: 40 }} />
+          <Avatar sx={{ width: { xs: 64, sm: 80 }, height: { xs: 64, sm: 80 }, mx: 'auto', mb: 3, bgcolor: 'primary.main' }}>
+            <Email sx={{ fontSize: { xs: 32, sm: 40 } }} />
           </Avatar>
           <Typography variant="h4" gutterBottom>
             Verify Your Email
@@ -146,7 +146,7 @@ const Verification = () => {
         </Box>
 
         {/* Verification Code Input */}
-        <Box mb={4}>
+        <Box mb={{ xs: 3, sm: 4 }}>
           <Typography variant="h6" gutterBottom textAlign="center">
             Enter Verification Code
           </Typography>
@@ -159,13 +159,13 @@ const Verification = () => {
                   onChange={(e) => handleCodeChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
                   variant="outlined"
-                  size="large"
+                  size="small"
                   inputProps={{
                     maxLength: 1,
-                    style: { textAlign: 'center', fontSize: '1.5rem' }
+                    style: { textAlign: 'center', fontSize: '1.25rem' }
                   }}
                   sx={{
-                    width: 60,
+                    width: { xs: 48, sm: 60 },
                     '& .MuiOutlinedInput-root': {
                       '& fieldset': {
                         borderColor: digit ? 'primary.main' : 'divider',

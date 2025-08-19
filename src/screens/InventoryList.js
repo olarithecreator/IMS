@@ -222,7 +222,7 @@ function InventoryList() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, justifyContent: 'space-between', alignItems: { xs: 'stretch', sm: 'center' }, mb: 3 }}>
         <Typography variant="h4" component="h1">
           Inventory
         </Typography>
@@ -235,8 +235,8 @@ function InventoryList() {
         </Button>
       </Box>
 
-      <Paper sx={{ p: 2, mb: 2 }}>
-        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mb: 2 }}>
+      <Paper sx={{ p: { xs: 1.5, sm: 2 }, mb: 2 }}>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'stretch', mb: 2, flexWrap: 'wrap' }}>
           <TextField
             placeholder="Search products..."
             value={searchTerm}
@@ -248,9 +248,9 @@ function InventoryList() {
                 </InputAdornment>
               ),
             }}
-            sx={{ minWidth: 300 }}
+            sx={{ minWidth: { xs: '100%', sm: 240 } }}
           />
-          <FormControl sx={{ minWidth: 120 }}>
+          <FormControl sx={{ minWidth: { xs: '100%', sm: 160 } }}>
             <InputLabel>Category</InputLabel>
             <Select
               value={selectedCategory}
@@ -264,7 +264,7 @@ function InventoryList() {
               ))}
             </Select>
           </FormControl>
-          <FormControl sx={{ minWidth: 120 }}>
+          <FormControl sx={{ minWidth: { xs: '100%', sm: 160 } }}>
             <InputLabel>Status</InputLabel>
             <Select
               value={selectedStatus}
@@ -286,12 +286,13 @@ function InventoryList() {
               setSelectedCategory('All');
               setSelectedStatus('All');
             }}
+            sx={{ width: { xs: '100%', sm: 'auto' } }}
           >
             Clear Filters
           </Button>
         </Box>
 
-        <Box sx={{ height: 600, width: '100%' }}>
+        <Box sx={{ height: { xs: 500, sm: 600 }, width: '100%' }}>
           <DataGrid
             rows={filteredProducts}
             columns={columns}
@@ -301,6 +302,13 @@ function InventoryList() {
             sx={{
               '& .MuiDataGrid-cell:focus': {
                 outline: 'none',
+              },
+              '& .MuiDataGrid-columnHeaders': {
+                fontSize: { xs: '0.8rem', sm: '0.875rem' },
+              },
+              '& .MuiDataGrid-cell': {
+                fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                py: { xs: 0.5, sm: 1 },
               },
             }}
           />
