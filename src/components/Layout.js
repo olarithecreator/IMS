@@ -111,7 +111,7 @@ function Layout() {
           <IconButton color="inherit">
             <Search />
           </IconButton>
-          <IconButton color="inherit">
+          <IconButton color="inherit" onClick={() => navigate('/dashboard/alerts')}>
             <Badge badgeContent={4} color="error">
               <Notifications />
             </Badge>
@@ -185,7 +185,7 @@ function Layout() {
           Settings
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleProfileMenuClose}>Logout</MenuItem>
+        <MenuItem onClick={() => { handleProfileMenuClose(); navigate('/dashboard/logout'); }}>Logout</MenuItem>
       </Menu>
     </Box>
   );

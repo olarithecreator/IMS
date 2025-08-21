@@ -75,6 +75,10 @@ const Sales = () => {
   });
   const [paymentMethod, setPaymentMethod] = useState('cash');
   const [orderNotes, setOrderNotes] = useState('');
+  const [discountOpen, setDiscountOpen] = useState(false);
+  const [discountQty, setDiscountQty] = useState(1);
+  const [discountPercent, setDiscountPercent] = useState('');
+  const [discountAmount, setDiscountAmount] = useState('');
 
   // Mock data
   const mockProducts = [
@@ -438,6 +442,9 @@ const Sales = () => {
                             ${getTotalAmount().toFixed(2)}
                           </Typography>
                         </Box>
+                        <Button fullWidth variant="outlined" sx={{ mb: 1 }} onClick={() => setDiscountOpen(true)}>
+                          Discount / Promo
+                        </Button>
                         <Button
                           fullWidth
                           variant="contained"
@@ -920,6 +927,33 @@ const Sales = () => {
         {/* Step Content */}
         {renderStepContent()}
       </Paper>
+
+      {/* Discount / Promo Modal */}
+      <Dialog open={discountOpen} onClose={() => setDiscountOpen(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>Discount / Promo</DialogTitle>
+        <DialogContent>
+          <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+            <Typography variant="body2">Quantity</Typography>
+            <Box>
+              <IconButton onClick={() => setDiscountQty(Math.max(1, discountQty - 1))}><Remove /></IconButton>
+              <Typography component="span" sx={{ mx: 1 }}>{discountQty}</Typography>
+              <IconButton onClick={() => setDiscountQty(discountQty + 1)}><Add /></IconButton>
+            </Box>
+          </Box>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField fullWidth label="Discount by percentage" placeholder="% Custom or 5 / 10 / 15" value={discountPercent} onChange={(e) => setDiscountPercent(e.target.value)} />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField fullWidth label="Discount by price" placeholder="₦ 0.00" value={discountAmount} onChange={(e) => setDiscountAmount(e.target.value)} />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDiscountOpen(false)}>Cancel</Button>
+          <Button variant="contained" onClick={() => setDiscountOpen(false)}>Apply</Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

@@ -31,3 +31,6 @@ Thumbs.db
  
 # Remove legacy duplicate app directory
 Frontend/
+
+# Do not commit UI design assets
+UI name/

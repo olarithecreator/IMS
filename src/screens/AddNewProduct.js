@@ -640,7 +640,7 @@ const AddNewProduct = () => {
   return (
     <Box sx={{ p: 3 }}>
       {/* Stepper */}
-      <Paper sx={{ p: 2, mb: 3 }}>
+      <Paper sx={{ p: 2, mb: 3, borderRadius: 3 }}>
         <Stepper activeStep={steps.findIndex(step => step.value === activeStep)}>
           {steps.map((stepItem) => (
             <Step key={stepItem.value}>
@@ -656,7 +656,7 @@ const AddNewProduct = () => {
       </Paper>
 
       {/* Content */}
-      <Paper sx={{ p: 3, mb: 3 }}>
+      <Paper sx={{ p: 3, mb: 3, borderRadius: 3 }}>
         {renderContent()}
       </Paper>
 

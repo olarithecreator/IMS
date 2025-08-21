@@ -15,6 +15,12 @@ import {
   ListItemText,
   CircularProgress,
   Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  InputAdornment,
 } from '@mui/material';
 import {
   ArrowBack,
@@ -35,6 +41,11 @@ function ProductDetails() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState(null);
+  const [addStockOpen, setAddStockOpen] = useState(false);
+  const [updatePriceOpen, setUpdatePriceOpen] = useState(false);
+  const [qtyToAdd, setQtyToAdd] = useState(1);
+  const [costPerUnit, setCostPerUnit] = useState('');
+  const [newPrice, setNewPrice] = useState('');
 
   useEffect(() => {
     // Simulate loading product data
@@ -177,12 +188,10 @@ function ProductDetails() {
         {/* Product Information */}
         <Grid item xs={12} md={8}>
           <Grid container spacing={3}>
-            {/* Basic Information */}
+            {/* Core Details */}
             <Grid item xs={12}>
               <Paper sx={{ p: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  Basic Information
-                </Typography>
+                <Typography variant="h6" gutterBottom>Core Details</Typography>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -218,107 +227,63 @@ function ProductDetails() {
                   </Grid>
                 </Grid>
                 <Divider sx={{ my: 2 }} />
-                <Typography variant="body1" paragraph>
-                  {product.description}
-                </Typography>
+                <Typography variant="body1" paragraph>{product.description}</Typography>
               </Paper>
             </Grid>
 
-            {/* Stock Information */}
+            {/* Stock Alerts & Expiry */}
             <Grid item xs={12} md={6}>
               <Paper sx={{ p: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  Stock Information
-                </Typography>
+                <Typography variant="h6" gutterBottom>Stock Alerts & Expiry</Typography>
+                <List dense>
+                  <ListItem><ListItemText primary="Low-Stock Alert (pcs)" secondary={product.minStock} /></ListItem>
+                  <ListItem><ListItemText primary="Expiry Date" secondary="Select date" /></ListItem>
+                </List>
+              </Paper>
+            </Grid>
+
+            {/* Pricing */}
+            <Grid item xs={12} md={6}>
+              <Paper sx={{ p: 3 }}>
+                <Typography variant="h6" gutterBottom>Pricing</Typography>
+                <List dense>
+                  <ListItem><ListItemText primary="Cost Price" secondary={`₦${product.cost}`} /></ListItem>
+                  <ListItem><ListItemText primary="Selling Price" secondary={`₦${product.price}`} /></ListItem>
+                </List>
+              </Paper>
+            </Grid>
+
+            {/* Additional Information */}
+            <Grid item xs={12} md={6}>
+              <Paper sx={{ p: 3 }}>
+                <Typography variant="h6" gutterBottom>Additional Information</Typography>
                 <List dense>
                   <ListItem>
                     <ListItemText
-                      primary="Current Stock"
-                      secondary={`${product.stock} units`}
+                      primary="Supplier Name"
+                      secondary={product.supplier}
                     />
                   </ListItem>
                   <ListItem>
                     <ListItemText
-                      primary="Minimum Stock"
-                      secondary={`${product.minStock} units`}
+                      primary="Description"
+                      secondary={product.description}
                     />
                   </ListItem>
                   <ListItem>
                     <ListItemText
-                      primary="Maximum Stock"
-                      secondary={`${product.maxStock} units`}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText
-                      primary="Last Updated"
-                      secondary={product.lastUpdated}
+                      primary="Color / Size"
+                      secondary="Not set"
                     />
                   </ListItem>
                 </List>
               </Paper>
             </Grid>
 
-            {/* Specifications */}
+            {/* Audit & History */}
             <Grid item xs={12} md={6}>
               <Paper sx={{ p: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  Specifications
-                </Typography>
-                <List dense>
-                  {Object.entries(product.specifications).map(([key, value]) => (
-                    <ListItem key={key}>
-                      <ListItemText
-                        primary={key}
-                        secondary={value}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-              </Paper>
-            </Grid>
-
-            {/* Additional Details */}
-            <Grid item xs={12} md={6}>
-              <Paper sx={{ p: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  Additional Details
-                </Typography>
-                <List dense>
-                  <ListItem>
-                    <ListItemText
-                      primary="Weight"
-                      secondary={`${product.weight} kg`}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText
-                      primary="Dimensions"
-                      secondary={product.dimensions}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText
-                      primary="Barcode"
-                      secondary={product.barcode}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText
-                      primary="Tags"
-                      secondary={product.tags.join(', ')}
-                    />
-                  </ListItem>
-                </List>
-              </Paper>
-            </Grid>
-
-            {/* Recent Activity */}
-            <Grid item xs={12} md={6}>
-              <Paper sx={{ p: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  Recent Activity
-                </Typography>
+                <Typography variant="h6" gutterBottom>Audit & History</Typography>
                 <List dense>
                   {product.history.map((item, index) => (
                     <ListItem key={index}>
@@ -334,6 +299,43 @@ function ProductDetails() {
           </Grid>
         </Grid>
       </Grid>
+
+      {/* Sticky bottom actions */}
+      <Paper sx={{ position: 'sticky', bottom: 0, left: 0, right: 0, mt: 2, p: 2, borderRadius: 3 }} elevation={2}>
+        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <Button variant="contained" onClick={() => setAddStockOpen(true)}>Add Stock</Button>
+          <Button variant="outlined" onClick={() => setUpdatePriceOpen(true)}>Update Price</Button>
+        </Box>
+      </Paper>
+
+      {/* Add Stock Dialog */}
+      <Dialog open={addStockOpen} onClose={() => setAddStockOpen(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>Add Stock</DialogTitle>
+        <DialogContent>
+          <TextField fullWidth type="number" label="Qty" value={qtyToAdd} onChange={(e) => setQtyToAdd(Math.max(1, parseInt(e.target.value)||1))} sx={{ mb: 2 }} />
+          <TextField fullWidth label="Cost per Unit" value={costPerUnit} onChange={(e) => setCostPerUnit(e.target.value)} InputProps={{ startAdornment: <InputAdornment position="start">₦</InputAdornment> }} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setAddStockOpen(false)}>Cancel</Button>
+          <Button variant="contained" onClick={() => setAddStockOpen(false)}>Save</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Update Price Dialog */}
+      <Dialog open={updatePriceOpen} onClose={() => setUpdatePriceOpen(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>Update Price</DialogTitle>
+        <DialogContent>
+          <List dense>
+            <ListItem><ListItemText primary="Cost Price" secondary={`₦${product.cost}`} /></ListItem>
+            <ListItem><ListItemText primary="Current Price" secondary={`₦${product.price}`} /></ListItem>
+          </List>
+          <TextField fullWidth label="New Price ₦" value={newPrice} onChange={(e) => setNewPrice(e.target.value)} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setUpdatePriceOpen(false)}>Cancel</Button>
+          <Button variant="contained" onClick={() => setUpdatePriceOpen(false)}>Update Price</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

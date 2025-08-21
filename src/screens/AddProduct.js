@@ -405,8 +405,8 @@ function AddProduct() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" component="h1">
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography sx={{ typography: { xs: 'h6', sm: 'h4' }, fontWeight: 800 }}>
           Add New Product
         </Typography>
         <Button
@@ -424,8 +424,8 @@ function AddProduct() {
         </Alert>
       )}
 
-      <Paper sx={{ p: 3 }}>
-        <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
+      <Paper sx={{ p: 3, borderRadius: 3 }}>
+        <Stepper activeStep={activeStep} sx={{ mb: 3 }}>
           {steps.map((label) => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>

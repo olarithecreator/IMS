@@ -32,6 +32,7 @@ import StaffPinLogin from './screens/StaffPinLogin';
 import ProductDetails from './screens/ProductDetails';
 import AddProduct from './screens/AddProduct';
 import EditProduct from './screens/EditProduct';
+import Alerts from './screens/Alerts';
 
 function App() {
   return (
@@ -73,6 +74,7 @@ function App() {
           
           {/* Notifications Route (11) */}
           <Route path="notifications" element={<Notifications />} />
+          <Route path="alerts" element={<Alerts />} />
           
           {/* Stores Route (12) */}
           <Route path="stores" element={<Stores />} />

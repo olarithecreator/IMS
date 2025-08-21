@@ -99,7 +99,7 @@ function Dashboard() {
   const navValue = useMemo(() => {
     const path = location.pathname;
     if (path.startsWith('/dashboard/scan-product')) return 'scan';
-    if (path.startsWith('/dashboard/product')) return 'products';
+    if (path.startsWith('/dashboard/inventory') || path.startsWith('/dashboard/product')) return 'products';
     if (path.startsWith('/dashboard/sales')) return 'sales';
     return 'home';
   }, [location.pathname]);
@@ -108,7 +108,7 @@ function Dashboard() {
     <Box>
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h6">Dashboard</Typography>
+        <Typography sx={{ typography: { xs: 'h6', sm: 'h5' }, fontWeight: 800 }}>Dashboard</Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Chip icon={<CloudDone sx={{ color: 'success.main !important' }} />} label="Synced" size="small" sx={{ bgcolor: 'success.light', color: 'success.main' }} />
         </Box>
@@ -171,7 +171,7 @@ function Dashboard() {
       </Card>
 
       {/* Quick Actions */}
-      <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>Quick Actions</Typography>
+      <Typography variant="subtitle1" sx={{ fontWeight: 800, mb: 1 }}>Quick Actions</Typography>
       <Grid container spacing={2} sx={{ mb: 2 }}>
         <Grid item xs={6}>
           <ActionCard primary="Add Stock" icon={<AddCircleOutline color="primary" />} onClick={() => navigate('/dashboard/add-product')} />
@@ -221,7 +221,7 @@ function Dashboard() {
         <BottomNavigation showLabels value={navValue} onChange={(_, value) => {
           if (value === 'home') navigate('/dashboard');
           if (value === 'scan') navigate('/dashboard/scan-product/0');
-          if (value === 'products') navigate('/dashboard/product/0');
+          if (value === 'products') navigate('/dashboard/inventory');
           if (value === 'sales') navigate('/dashboard/sales/0');
         }}>
           <BottomNavigationAction value="home" label="Home" icon={<Home />} />

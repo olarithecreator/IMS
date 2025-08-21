@@ -8,352 +8,91 @@ import {
   Typography,
   Container,
   Alert,
-  IconButton,
-  InputAdornment,
   Grid,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
+  InputAdornment,
+  IconButton,
+  Divider,
+  Chip
 } from '@mui/material';
-import {
-  Visibility,
-  VisibilityOff,
-  Email,
-  Lock,
-  Person,
-  Business,
-  Phone,
-} from '@mui/icons-material';
+import { Phone, Google, Apple, Email } from '@mui/icons-material';
 
 function Register() {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    company: '',
-    phone: '',
-    role: '',
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [countryCode, setCountryCode] = useState('+234');
+  const [phone, setPhone] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = (e) => {
+  const handleSendCode = (e) => {
     e.preventDefault();
     setError('');
-
-    // Basic validation
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
-      setError('Please fill in all required fields');
+    const phoneDigits = phone.replace(/\D/g, '');
+    if (phoneDigits.length < 7) {
+      setError('Enter a valid phone number');
       return;
     }
-
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
-      return;
-    }
-
-    // Check if user already exists
-    const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
-    const userExists = existingUsers.find(user => user.email === formData.email);
-    
-    if (userExists) {
-      setError('An account with this email already exists');
-      return;
-    }
-
-    // Prepare user data
-    const newUser = {
-      id: Date.now(),
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      email: formData.email,
-      password: formData.password, // In a real app, this should be hashed
-      company: formData.company,
-      phone: formData.phone,
-      role: formData.role,
-      isApproved: formData.role === 'admin',
-      createdAt: new Date().toISOString()
-    };
-
-    // Companies store: [{ id, name, ownerEmail, users: [{ email, role, approved }], pending: [{ email, role }] }]
-    const companies = JSON.parse(localStorage.getItem('companies') || '[]');
-    const findCompanyByName = (name) => companies.find(c => c.name.toLowerCase() === String(name || '').toLowerCase());
-
-    if (newUser.role === 'admin') {
-      // Admin must create a new company
-      if (!newUser.company || !newUser.company.trim()) {
-        setError('Company name is required for admin accounts');
-        return;
-      }
-      const existingCompany = findCompanyByName(newUser.company);
-      if (existingCompany) {
-        setError('A company with this name already exists. Choose a different name or register as manager/staff to join it.');
-        return;
-      }
-      const company = {
-        id: Date.now(),
-        name: newUser.company,
-        ownerEmail: newUser.email,
-        users: [{ email: newUser.email, role: 'admin', approved: true }],
-        pending: []
-      };
-      companies.push(company);
-    } else {
-      // Manager/Staff must join an existing company
-      const company = findCompanyByName(newUser.company);
-      if (!company) {
-        setError('Company not found. Please enter an existing company name or ask your admin.');
-        return;
-      }
-      // Add to pending requests if not already pending/approved
-      const alreadyApproved = company.users.some(u => u.email === newUser.email);
-      const alreadyPending = company.pending.some(p => p.email === newUser.email);
-      if (!alreadyApproved && !alreadyPending) {
-        company.pending.push({ email: newUser.email, role: newUser.role });
-      }
-    }
-
-    // Persist companies and users
-    localStorage.setItem('companies', JSON.stringify(companies));
-    existingUsers.push(newUser);
-    localStorage.setItem('users', JSON.stringify(existingUsers));
-
+    localStorage.setItem('pendingPhone', JSON.stringify({ countryCode, phone: phoneDigits }));
     setSuccess(true);
-    setTimeout(() => {
-      navigate('/login');
-    }, 2000);
+    setTimeout(() => navigate('/verification'), 800);
   };
 
   return (
-    <Container component="main" maxWidth="sm">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Paper
-          elevation={3}
-          sx={{
-            padding: 4,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            width: '100%',
-          }}
-        >
-          <Typography component="h1" variant="h4" gutterBottom>
-            Inventory Management System
-          </Typography>
-          <Typography component="h2" variant="h6" color="textSecondary" gutterBottom>
-            Create Account
-          </Typography>
+    <Container component="main" maxWidth="sm" sx={{ py: { xs: 2, sm: 6 } }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Paper sx={{ width: '100%', borderRadius: 3, p: { xs: 2, sm: 4 } }}>
+          <Box sx={{ textAlign: 'center', mb: 2 }}>
+            <Typography sx={{ typography: { xs: 'h5', sm: 'h4' }, fontWeight: 800 }}>Create your Account</Typography>
+            <Typography variant="body2" color="text.secondary">
+              Let's get you started on managing your inventory.
+            </Typography>
+          </Box>
 
-          {error && (
-            <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
-              {error}
-            </Alert>
-          )}
+          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+          {success && <Alert severity="success" sx={{ mb: 2 }}>Code sent!</Alert>}
 
-          {success && (
-            <Alert severity="success" sx={{ width: '100%', mb: 2 }}>
-              Account created successfully! Redirecting to login...
-            </Alert>
-          )}
-
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+          <Box component="form" onSubmit={handleSendCode}>
+            <Typography variant="caption" sx={{ fontWeight: 700 }}>Phone Number</Typography>
+            <Grid container spacing={1} alignItems="center" sx={{ mt: 0.5 }}>
+              <Grid item xs={4} sm={3}>
                 <TextField
-                  required
                   fullWidth
-                  name="firstName"
-                  label="First Name"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Person />
-                      </InputAdornment>
-                    ),
-                  }}
+                  value={countryCode}
+                  onChange={(e) => setCountryCode(e.target.value)}
+                  inputProps={{ maxLength: 5 }}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  name="lastName"
-                  label="Last Name"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Person />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="email"
-                  label="Email Address"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Email />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={8} sm={9}>
                 <TextField
                   fullWidth
-                  name="company"
-                  label="Company Name"
-                  value={formData.company}
-                  onChange={handleChange}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Business />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  name="phone"
-                  label="Phone Number"
-                  value={formData.phone}
-                  onChange={handleChange}
+                  placeholder="801 234 5678"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
                         <Phone />
                       </InputAdornment>
-                    ),
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel>Role</InputLabel>
-                  <Select
-                    name="role"
-                    value={formData.role}
-                    label="Role"
-                    onChange={handleChange}
-                  >
-                    <MenuItem value="admin">Admin</MenuItem>
-                    <MenuItem value="manager">Manager</MenuItem>
-                    <MenuItem value="staff">Staff</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={formData.password}
-                  onChange={handleChange}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Lock />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={() => setShowPassword(!showPassword)}
-                          edge="end"
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="confirmPassword"
-                  label="Confirm Password"
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Lock />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                          edge="end"
-                        >
-                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
+                    )
                   }}
                 />
               </Grid>
             </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Create Account
-            </Button>
-            <Box sx={{ textAlign: 'center' }}>
-              <Link to="/login" style={{ textDecoration: 'none' }}>
-                <Typography variant="body2" color="primary">
-                  Already have an account? Sign In
-                </Typography>
+            <Button type="submit" fullWidth color="primary" sx={{ mt: 2 }}>Send Code</Button>
+          </Box>
+
+          <Divider sx={{ my: 3 }}><Typography variant="caption" color="text.secondary">OR CONTINUE WITH</Typography></Divider>
+
+          <Grid container spacing={2}>
+            <Grid item xs={4}><Button fullWidth variant="outlined" startIcon={<Google />}>Google</Button></Grid>
+            <Grid item xs={4}><Button fullWidth variant="outlined" startIcon={<Apple />}>Apple</Button></Grid>
+            <Grid item xs={4}><Button fullWidth variant="outlined" startIcon={<Email />}>Email</Button></Grid>
+          </Grid>
+
+          <Box sx={{ textAlign: 'center', mt: 3 }}>
+            <Typography variant="body2">Already have an account? <Link to="/login" style={{ textDecoration: 'none' }}>Sign In</Link></Typography>
+            <Box sx={{ mt: 1 }}>
+              <Link to="/dashboard/staff-login" style={{ textDecoration: 'none' }}>
+                <Chip label="Store Staff Login" variant="outlined" />
               </Link>
             </Box>
           </Box>
@@ -363,4 +102,4 @@ function Register() {
   );
 }
 
-export default Register; 
+export default Register;

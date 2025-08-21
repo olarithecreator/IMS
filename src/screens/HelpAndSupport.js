@@ -202,12 +202,10 @@ const HelpAndSupport = () => {
 
   const renderHelpCenter = () => (
     <Box>
-      <Typography variant="h4" component="h1" sx={{ mb: 3 }}>
-        Help Center
-      </Typography>
+      <Typography sx={{ typography: { xs: 'h6', sm: 'h4' }, fontWeight: 800, mb: 2 }}>Help Center</Typography>
 
       {/* Search */}
-      <Paper sx={{ p: 2, mb: 3 }}>
+      <Paper sx={{ p: 2, mb: 3, borderRadius: 3 }}>
         <TextField
           fullWidth
           placeholder="Search for help articles, FAQs, or topics..."
@@ -224,16 +222,17 @@ const HelpAndSupport = () => {
       </Paper>
 
       {/* Help Categories */}
-      <Typography variant="h5" sx={{ mb: 2 }}>
-        Help Categories
-      </Typography>
+      <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>Help Categories</Typography>
       <Grid container spacing={3} sx={{ mb: 4 }}>
         {helpCategories.map((category) => (
           <Grid item xs={12} md={6} lg={3} key={category.id}>
             <Card 
               sx={{ 
                 cursor: 'pointer',
-                '&:hover': { boxShadow: 4 }
+                '&:hover': { boxShadow: 4 },
+                borderRadius: 3,
+                border: '1px solid',
+                borderColor: 'divider'
               }}
               onClick={() => setSelectedCategory(category.title)}
             >
@@ -264,10 +263,8 @@ const HelpAndSupport = () => {
       </Grid>
 
       {/* FAQs */}
-      <Typography variant="h5" sx={{ mb: 2 }}>
-        Frequently Asked Questions
-      </Typography>
-      <Paper sx={{ mb: 4 }}>
+      <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>Frequently Asked Questions</Typography>
+      <Paper sx={{ mb: 4, borderRadius: 3 }}>
         {filteredFAQs.map((faq, index) => (
           <Accordion key={index}>
             <AccordionSummary expandIcon={<ExpandMore />}>
@@ -310,9 +307,7 @@ const HelpAndSupport = () => {
       </Paper>
 
       {/* Quick Actions */}
-      <Typography variant="h5" sx={{ mb: 2 }}>
-        Quick Actions
-      </Typography>
+      <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>Quick Actions</Typography>
       <Grid container spacing={2}>
         <Grid item xs={12} md={4}>
           <Button

@@ -297,82 +297,33 @@ const RolesAndStaff = () => {
 
   const renderStaffManagement = () => (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" component="h1">
-          Staff Management
-        </Typography>
-        <Button
-          variant="contained"
-          startIcon={<PersonAdd />}
-          onClick={() => navigate('/dashboard/roles-staff/add')}
-        >
-          Add Staff Member
+      <Typography sx={{ typography: { xs: 'h6', sm: 'h4' }, fontWeight: 800, mb: 2 }}>
+        Roles & Staff
+      </Typography>
+      <Paper sx={{ p: 1 }}>
+        <List>
+          {staff.map((member) => (
+            <ListItem key={member.id} secondaryAction={
+              <IconButton edge="end" onClick={() => handleDialogOpen('editStaff', member)}>
+                <Edit />
+              </IconButton>
+            }>
+              <ListItemIcon>
+                <Avatar sx={{ bgcolor: 'primary.main' }}>{member.avatar}</Avatar>
+              </ListItemIcon>
+              <ListItemText
+                primary={<Typography sx={{ fontWeight: 600 }}>{member.name}</Typography>}
+                secondary={<Typography variant="body2" color="text.secondary">{member.role}</Typography>}
+              />
+            </ListItem>
+          ))}
+        </List>
+      </Paper>
+      <Box sx={{ position: 'fixed', right: 24, bottom: 24 }}>
+        <Button variant="contained" startIcon={<PersonAdd />} onClick={() => navigate('/dashboard/roles-staff/add')}>
+          Add Staff
         </Button>
       </Box>
-
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Staff Member</TableCell>
-              <TableCell>Role</TableCell>
-              <TableCell>Store</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Last Active</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {staff.map((member) => (
-              <TableRow key={member.id}>
-                <TableCell>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                    <Avatar sx={{ bgcolor: 'primary.main' }}>
-                      {member.avatar}
-                    </Avatar>
-                    <Box>
-                      <Typography variant="subtitle2">{member.name}</Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {member.email}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </TableCell>
-                <TableCell>
-                  <Chip
-                    label={member.role}
-                    size="small"
-                    color="primary"
-                  />
-                </TableCell>
-                <TableCell>{member.store}</TableCell>
-                <TableCell>
-                  <Chip
-                    label={member.status}
-                    color={member.status === 'active' ? 'success' : 'default'}
-                    size="small"
-                  />
-                </TableCell>
-                <TableCell>{member.lastActive}</TableCell>
-                <TableCell>
-                  <IconButton
-                    size="small"
-                    onClick={() => handleDialogOpen('editStaff', member)}
-                  >
-                    <Edit />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    color="error"
-                  >
-                    <Delete />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
     </Box>
   );
 

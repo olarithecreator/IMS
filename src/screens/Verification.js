@@ -135,10 +135,12 @@ const Verification = () => {
             <Email sx={{ fontSize: { xs: 32, sm: 40 } }} />
           </Avatar>
           <Typography variant="h4" gutterBottom>
-            Verify Your Email
+            Enter Verification Code
           </Typography>
           <Typography variant="body1" color="text.secondary" paragraph>
-            We've sent a 6-digit verification code to your email address.
+            We've sent a 6-digit code to {(() => {
+              try { const p = JSON.parse(localStorage.getItem('pendingPhone')||'null'); return p ? `${p.countryCode} ${p.phone}` : 'your contact'; } catch { return 'your contact'; }
+            })()}.
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Please check your inbox and enter the code below.

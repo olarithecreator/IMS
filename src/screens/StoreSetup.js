@@ -38,52 +38,22 @@ const StoreSetup = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [storeData, setStoreData] = useState({
     storeName: '',
-    storeType: '',
-    industry: '',
-    address: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    country: '',
-    phone: '',
-    email: '',
-    website: '',
-    currency: 'USD',
-    timezone: 'UTC',
-    taxRate: '',
-    enableNotifications: true,
-    enableAnalytics: true,
-    enableMultiLocation: false,
-    enableBarcodeScanning: true,
-    enableAutomatedReordering: false
+    currency: 'NGN',
+    lowStock: '',
   });
 
-  const steps = [
-    'Basic Information',
-    'Location & Contact',
-    'Business Settings',
-    'Features & Preferences'
-  ];
+  const steps = ['Store Setup'];
 
   const handleInputChange = (field, value) => {
     setStoreData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleNext = () => {
-    if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      // Complete setup and navigate to dashboard
-      navigate('/dashboard');
-    }
+    navigate('/dashboard');
   };
 
   const handleBack = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    } else {
-      navigate('/login');
-    }
+    navigate('/login');
   };
 
   const renderStepContent = () => {
@@ -92,57 +62,43 @@ const StoreSetup = () => {
         return (
           <Box>
             <Typography variant="h5" gutterBottom>
-              Basic Store Information
-            </Typography>
-            <Typography variant="body1" color="text.secondary" paragraph>
-              Let's start with the essential details about your store.
+              Store Setup
             </Typography>
             <Grid container spacing={3} mt={2}>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12}>
                 <TextField
                   fullWidth
                   label="Store Name"
                   value={storeData.storeName}
                   onChange={(e) => handleInputChange('storeName', e.target.value)}
-                  variant="outlined"
                   required
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12}>
                 <FormControl fullWidth>
-                  <InputLabel>Store Type</InputLabel>
+                  <InputLabel>Currency</InputLabel>
                   <Select
-                    value={storeData.storeType}
-                    label="Store Type"
-                    onChange={(e) => handleInputChange('storeType', e.target.value)}
+                    value={storeData.currency}
+                    label="Currency"
+                    onChange={(e) => handleInputChange('currency', e.target.value)}
                   >
-                    <MenuItem value="retail">Retail Store</MenuItem>
-                    <MenuItem value="ecommerce">E-commerce</MenuItem>
-                    <MenuItem value="wholesale">Wholesale</MenuItem>
-                    <MenuItem value="restaurant">Restaurant</MenuItem>
-                    <MenuItem value="service">Service Business</MenuItem>
-                    <MenuItem value="other">Other</MenuItem>
+                    <MenuItem value="NGN">Nigerian Naira (NGN)</MenuItem>
+                    <MenuItem value="USD">US Dollar (USD)</MenuItem>
+                    <MenuItem value="GHS">Ghana Cedi (GHS)</MenuItem>
+                    <MenuItem value="KES">Kenyan Shilling (KES)</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  label="Industry"
-                  value={storeData.industry}
-                  onChange={(e) => handleInputChange('industry', e.target.value)}
-                  variant="outlined"
+                  label="Low Stock Alert Limit"
+                  placeholder="e.g, 10"
+                  type="number"
+                  value={storeData.lowStock}
+                  onChange={(e) => handleInputChange('lowStock', e.target.value)}
                 />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Website (Optional)"
-                  value={storeData.website}
-                  onChange={(e) => handleInputChange('website', e.target.value)}
-                  variant="outlined"
-                  placeholder="https://yourstore.com"
-                />
+                <Typography variant="caption" color="text.secondary">Get notified when an item's stock falls to this number.</Typography>
               </Grid>
             </Grid>
           </Box>
@@ -403,51 +359,20 @@ const StoreSetup = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Container maxWidth="sm" sx={{ py: 4 }}>
       <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
-        {/* Header */}
-        <Box textAlign="center" mb={4}>
-          <Avatar sx={{ width: 80, height: 80, mx: 'auto', mb: 3, bgcolor: 'primary.main' }}>
-            <Store sx={{ fontSize: 40 }} />
+        <Box textAlign="center" mb={2}>
+          <Avatar sx={{ width: 72, height: 72, mx: 'auto', mb: 2, bgcolor: 'primary.main' }}>
+            <Store sx={{ fontSize: 36 }} />
           </Avatar>
-          <Typography variant="h4" gutterBottom color="primary">
-            Store Setup
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Configure your store settings and preferences
-          </Typography>
+          <Typography variant="h5">Store Setup</Typography>
         </Box>
 
-        {/* Stepper */}
-        <Box mb={4}>
-          <Stepper activeStep={currentStep} alternativeLabel>
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-        </Box>
-
-        {/* Step Content */}
         {renderStepContent()}
 
-        {/* Navigation */}
         <Box display="flex" justifyContent="space-between" mt={4}>
-          <Button
-            variant="outlined"
-            onClick={handleBack}
-            startIcon={<ArrowBack />}
-          >
-            {currentStep === 0 ? 'Back to Login' : 'Previous'}
-          </Button>
-          <Button
-            variant="contained"
-            onClick={handleNext}
-            endIcon={currentStep === steps.length - 1 ? <CheckCircle /> : <ArrowForward />}
-          >
-            {currentStep === steps.length - 1 ? 'Complete Setup' : 'Next'}
-          </Button>
+          <Button variant="text" onClick={handleBack} startIcon={<ArrowBack />}>Back</Button>
+          <Button variant="contained" onClick={handleNext} endIcon={<CheckCircle />}>Complete Setup</Button>
         </Box>
       </Paper>
     </Container>

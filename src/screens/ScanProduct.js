@@ -12,6 +12,7 @@ import {
   CardContent,
   IconButton,
   InputAdornment,
+  Slider,
   List,
   ListItem,
   ListItemText,
@@ -134,18 +135,59 @@ const ScanProduct = () => {
       case '8.0':
         return (
           <Box>
-            <Typography variant="h5" gutterBottom>
-              Scan or Search Products
-            </Typography>
-            <Typography variant="body1" color="text.secondary" paragraph>
-              Use the barcode scanner or search manually to find products in your inventory.
-            </Typography>
+            <Typography variant="h5" gutterBottom>Scan</Typography>
+
+            {/* Scanner area */}
+            <Card variant="outlined" sx={{ mb: 3 }}>
+              <CardContent>
+                <Box sx={{
+                  position: 'relative',
+                  height: 200,
+                  borderRadius: 2,
+                  bgcolor: 'grey.100',
+                  overflow: 'hidden',
+                  border: '2px dashed rgba(0,0,0,0.12)'
+                }}>
+                  <Box sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: 16,
+                    right: 16,
+                    height: 6,
+                    bgcolor: 'primary.main',
+                    borderRadius: 3,
+                    filter: 'blur(2px)'
+                  }} />
+                </Box>
+                {/* Zoom slider */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 2 }}>
+                  <Typography variant="body2">-</Typography>
+                  <Slider value={50} aria-label="Zoom" sx={{ flex: 1 }} />
+                  <Typography variant="body2">+</Typography>
+                </Box>
+                {/* Actions */}
+                <Box sx={{ display: 'flex', justifyContent: 'space-around', mt: 2 }}>
+                  <Box textAlign="center">
+                    <IconButton color="primary" onClick={() => navigate('/dashboard/scan-product/8.1')}><Add /></IconButton>
+                    <Typography variant="caption">Manual</Typography>
+                  </Box>
+                  <Box textAlign="center">
+                    <IconButton color="primary"><CameraAlt /></IconButton>
+                    <Typography variant="caption">Flashlight</Typography>
+                  </Box>
+                  <Box textAlign="center">
+                    <IconButton color="primary"><ShoppingCart /></IconButton>
+                    <Typography variant="caption">Batch</Typography>
+                  </Box>
+                </Box>
+              </CardContent>
+            </Card>
             
             {/* Search Section */}
             <Card variant="outlined" sx={{ mb: 3 }}>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
-                  Manual Search
+                  Search
                 </Typography>
                 <Grid container spacing={2} alignItems="center">
                   <Grid item xs={12} md={8}>
@@ -174,49 +216,12 @@ const ScanProduct = () => {
               </CardContent>
             </Card>
 
-            {/* Scan Section */}
-            <Card variant="outlined" sx={{ mb: 3 }}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Barcode Scanner
-                </Typography>
-                <Box textAlign="center" py={3}>
-                  <IconButton
-                    size="large"
-                    onClick={handleScan}
-                    disabled={isScanning}
-                    sx={{ 
-                      width: 120, 
-                      height: 120, 
-                      border: 2, 
-                      borderColor: 'primary.main',
-                      '&:hover': { borderColor: 'primary.dark' }
-                    }}
-                  >
-                    {isScanning ? (
-                      <CircularProgress size={60} />
-                    ) : (
-                      <QrCodeScanner sx={{ fontSize: 60, color: 'primary.main' }} />
-                    )}
-                  </IconButton>
-                  <Typography variant="body2" color="text.secondary" mt={2}>
-                    {isScanning ? 'Scanning...' : 'Tap to scan barcode'}
-                  </Typography>
-                </Box>
-                {scannedCode && (
-                  <Alert severity="info" sx={{ mt: 2 }}>
-                    Scanned: {scannedCode}
-                  </Alert>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Search Results */}
+            {/* Live Match / Results */}
             {searchResults.length > 0 && (
               <Card variant="outlined">
                 <CardContent>
                   <Typography variant="h6" gutterBottom>
-                    Search Results ({searchResults.length})
+                    Live Match
                   </Typography>
                   <List>
                     {searchResults.map((product) => (
