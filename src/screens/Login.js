@@ -16,6 +16,8 @@ import {
   VisibilityOff,
   Email,
   Lock,
+  Google,
+  Apple,
 } from '@mui/icons-material';
 
 function Login() {
@@ -32,6 +34,20 @@ function Login() {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const loginUser = (user) => {
+    localStorage.setItem('isAuthenticated', 'true');
+    localStorage.setItem('currentUser', JSON.stringify({
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      company: user.company,
+      role: user.role,
+      provider: user.provider
+    }));
+    navigate('/dashboard');
   };
 
   const handleSubmit = (e) => {
@@ -60,20 +76,39 @@ function Login() {
         }
       }
 
-      // Store user info and authentication status
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('currentUser', JSON.stringify({
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        company: user.company,
-        role: user.role
-      }));
-      navigate('/dashboard');
+      loginUser(user);
     } else {
       setError('Invalid email or password');
     }
+  };
+
+  const validateEmail = (value) => /[^\s@]+@[^\s@]+\.[^\s@]+/.test(value);
+
+  const handleSocialLogin = (provider) => {
+    setError('');
+    const inputEmail = window.prompt(`Enter your ${provider === 'google' ? 'Google' : 'Apple'} email to continue:`) || '';
+    const email = inputEmail.trim();
+    if (!email) return;
+    if (!validateEmail(email)) {
+      setError('Enter a valid email address');
+      return;
+    }
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    let user = users.find(u => String(u.email).toLowerCase() === email.toLowerCase());
+    if (!user) {
+      user = {
+        id: Date.now(),
+        firstName: 'New',
+        lastName: 'User',
+        email,
+        password: '',
+        company: '',
+        role: 'admin',
+        provider
+      };
+      localStorage.setItem('users', JSON.stringify([...users, user]));
+    }
+    loginUser(user);
   };
 
   return (
@@ -173,6 +208,12 @@ function Login() {
             >
               Sign In
             </Button>
+
+            <Typography variant="body2" color="text.secondary" align="center" sx={{ my: 1 }}>OR</Typography>
+            <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+              <Button fullWidth variant="outlined" startIcon={<Google />} onClick={() => handleSocialLogin('google')}>Google</Button>
+              <Button fullWidth variant="outlined" startIcon={<Apple />} onClick={() => handleSocialLogin('apple')}>Apple</Button>
+            </Box>
             <Box sx={{ textAlign: 'center' }}>
               <Link to="/register" style={{ textDecoration: 'none' }}>
                 <Typography variant="body2" color="primary">
