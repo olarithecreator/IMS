@@ -4,7 +4,6 @@ import { Box } from '@mui/material';
 import Layout from './components/Layout';
 import Onboarding from './screens/Onboarding';
 import Register from './screens/Register';
-import Verification from './screens/Verification';
 import Login from './screens/Login';
 import StoreSetup from './screens/StoreSetup';
 import Dashboard from './screens/Dashboard';
@@ -45,8 +44,7 @@ function App() {
         {/* Register Route (3.2) */}
         <Route path="/register" element={<Register />} />
         
-        {/* Verification Route (4) */}
-        <Route path="/verification" element={<Verification />} />
+        {/* Verification removed: email-based registration only */}
         
         {/* Login Route (5) */}
         <Route path="/login" element={<Login />} />
