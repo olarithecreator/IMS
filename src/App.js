@@ -1,7 +1,9 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { Box } from '@mui/material';
+import { initializeDefaultData, isAuthenticated } from './utils/localStorage';
 import Layout from './components/Layout';
+import MobileLayout from './components/MobileLayout';
 import Onboarding from './screens/Onboarding';
 import Register from './screens/Register';
 import Login from './screens/Login';
@@ -32,8 +34,24 @@ import ProductDetails from './screens/ProductDetails';
 import AddProduct from './screens/AddProduct';
 import EditProduct from './screens/EditProduct';
 import Alerts from './screens/Alerts';
+import NewSale from './screens/NewSale';
+import Receipt from './screens/Receipt';
+import StoreManager from './screens/StoreManager';
+import VerificationCode from './screens/VerificationCode';
+import ForgotPassword from './screens/ForgotPassword';
+import ResetPassword from './screens/ResetPassword';
+
+// Protected Route Component
+const ProtectedRoute = ({ children }) => {
+  return isAuthenticated() ? children : <Navigate to="/login" replace />;
+};
 
 function App() {
+  useEffect(() => {
+    // Initialize default data on app load
+    initializeDefaultData();
+  }, []);
+
   return (
     <Box sx={{ display: 'flex' }}>
       <Routes>
@@ -52,71 +70,63 @@ function App() {
         {/* Store Setup Route (6) */}
         <Route path="/store-setup" element={<StoreSetup />} />
         
-        {/* Protected routes with layout */}
-        <Route path="/dashboard" element={<Layout />}>
-          {/* Dashboard Routes (7 to 7.2) */}
+        {/* Protected routes with mobile layout */}
+        <Route path="/dashboard" element={<ProtectedRoute><MobileLayout /></ProtectedRoute>}>
+          {/* Dashboard Routes */}
           <Route index element={<Dashboard />} />
-          <Route path=":step" element={<Dashboard />} />
           
-          {/* Scan Product Routes (8.0 to 8.1) */}
-          <Route path="scan-product/:step" element={<ScanProduct />} />
+          {/* Scan Product Routes */}
+          <Route path="scan" element={<ScanProduct />} />
+          <Route path="scan/:step" element={<ScanProduct />} />
           
-          {/* Product Page Routes (9.0 to 9.4) */}
-          <Route path="product/:step" element={<ProductPage />} />
+          {/* Product Routes */}
+          <Route path="products" element={<ProductPage />} />
+          <Route path="products/:step" element={<ProductPage />} />
           <Route path="product-details/:id" element={<ProductDetails />} />
           <Route path="add-product" element={<AddProduct />} />
           <Route path="edit-product/:id" element={<EditProduct />} />
           
-          {/* Sales Routes (10.0 to 10.5) */}
-          <Route path="sales/:step" element={<Sales />} />
+          {/* Sales Routes */}
+          <Route path="sales" element={<Sales />} />
+          <Route path="sales/new" element={<NewSale />} />
+          <Route path="sales/receipt/:id" element={<Receipt />} />
           
-          {/* Notifications Route (11) */}
+          {/* Notifications & Alerts */}
           <Route path="notifications" element={<Notifications />} />
           <Route path="alerts" element={<Alerts />} />
           
-          {/* Stores Route (12) */}
-          <Route path="stores" element={<Stores />} />
-          
-          {/* Profile Routes (13 to 13.1) */}
-          <Route path="profile/:step" element={<Profile />} />
+          {/* Profile & Settings */}
           <Route path="profile" element={<Profile />} />
+          <Route path="settings" element={<Settings />} />
           
-          {/* Roles and Staff Routes (14 to 15.2) */}
-          <Route path="roles-staff/:step" element={<RolesAndStaff />} />
+          {/* Store Management */}
+          <Route path="stores" element={<StoreManager />} />
           <Route path="roles-staff" element={<RolesAndStaff />} />
           <Route path="roles-staff/add" element={<AddStaff />} />
-          <Route path="confirm-invite" element={<ConfirmInvite />} />
-          <Route path="staff-login" element={<StaffPinLogin />} />
           
-          {/* Help and Support Routes (16 to 17) */}
-          <Route path="help-support/:step" element={<HelpAndSupport />} />
+          {/* Help & Support */}
           <Route path="help-support" element={<HelpAndSupport />} />
           
-          {/* Logout Route (18) */}
-          <Route path="logout" element={<Logout />} />
-          
-          {/* Add New Product Routes (19 to 24) */}
-          <Route path="add-product/:step" element={<AddNewProduct />} />
-          <Route path="add-product" element={<AddNewProduct />} />
-          
-          {/* Report Page Routes (25 to 24.1) */}
-          <Route path="reports/:step" element={<ReportPage />} />
+          {/* Reports */}
           <Route path="reports" element={<ReportPage />} />
           
-          {/* Alert Forget Password Routes (27 to 27.3) */}
-          <Route path="forgot-password/:step" element={<AlertForgetPassword />} />
-          <Route path="forgot-password" element={<AlertForgetPassword />} />
+          {/* Logout */}
+          <Route path="logout" element={<Logout />} />
           
-          {/* Local Storage Viewer Route */}
-          <Route path="local-storage" element={<LocalStorageViewer />} />
-
-          {/* Core app pages */}
+          {/* Legacy routes for compatibility */}
           <Route path="inventory" element={<InventoryList />} />
           <Route path="categories" element={<Categories />} />
           <Route path="suppliers" element={<Suppliers />} />
           <Route path="orders" element={<Orders />} />
-          <Route path="settings" element={<Settings />} />
+          <Route path="local-storage" element={<LocalStorageViewer />} />
         </Route>
+        
+        {/* Authentication flow routes */}
+        <Route path="/verification" element={<VerificationCode />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="confirm-invite" element={<ConfirmInvite />} />
+        <Route path="staff-login" element={<StaffPinLogin />} />
       </Routes>
     </Box>
   );

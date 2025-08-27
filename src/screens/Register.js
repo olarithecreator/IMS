@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { getUsers, saveUser } from '../utils/localStorage';
 import {
   Box,
   Paper,
@@ -87,12 +88,18 @@ function Register() {
       password: formData.password,
       company: '',
       role: 'admin',
-      provider: 'password'
+      provider: 'password',
+      verified: false
     };
     const updatedUsers = [...users, newUser];
     localStorage.setItem('users', JSON.stringify(updatedUsers));
-    setSuccess('Account created successfully');
-    persistAndLogin(newUser);
+    localStorage.setItem('userData', JSON.stringify(newUser));
+    setSuccess('Account created successfully! Check your email for verification.');
+    
+    // Navigate to verification screen
+    setTimeout(() => {
+      navigate('/verification', { state: { email: newUser.email } });
+    }, 1500);
   };
 
   const handleSocialSignIn = (provider) => {

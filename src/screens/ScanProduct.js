@@ -1,424 +1,306 @@
-import React, { useState, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Container,
   Typography,
   Button,
+  IconButton,
   Paper,
-  TextField,
-  Grid,
   Card,
   CardContent,
-  IconButton,
-  InputAdornment,
-  Slider,
   List,
   ListItem,
-  ListItemText,
-  ListItemAvatar,
   Avatar,
-  Chip,
-  Divider,
-  Alert,
-  CircularProgress
+  Slider,
+  Fab,
 } from '@mui/material';
 import {
-  QrCodeScanner,
-  Search,
-  CameraAlt,
-  Barcode,
-  Add,
-  Remove,
-  ShoppingCart,
   ArrowBack,
-  ArrowForward
+  Add,
+  FlashlightOn,
+  ShoppingCart,
+  Remove,
+  CropFree,
 } from '@mui/icons-material';
 
-const ScanProduct = () => {
-  const { step = '8.0' } = useParams();
+function ScanProduct() {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [scannedCode, setScannedCode] = useState('');
-  const [isScanning, setIsScanning] = useState(false);
-  const [searchResults, setSearchResults] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [quantity, setQuantity] = useState(1);
-  const [isSearching, setIsSearching] = useState(false);
+  const [scannerActive, setScannerActive] = useState(true);
+  const [cartItems, setCartItems] = useState([]);
+  const [liveMatches] = useState([
+    { id: 1, name: 'Handbag', price: 25000, image: '👜' },
+    { id: 2, name: 'Running Shoe', price: 15500, image: '👟' },
+    { id: 3, name: 'Gold Necklace', price: 50000, image: '📿' },
+  ]);
 
-  const videoRef = useRef(null);
-
-  // Mock product data
-  const mockProducts = [
-    {
-      id: '1',
-      name: 'iPhone 14 Pro',
-      sku: 'IPH14P-128GB',
-      barcode: '1234567890123',
-      price: 999.99,
-      stock: 25,
-      category: 'Electronics',
-      image: 'https://via.placeholder.com/80x80?text=iPhone'
-    },
-    {
-      id: '2',
-      name: 'Samsung Galaxy S23',
-      sku: 'SGS23-256GB',
-      barcode: '9876543210987',
-      price: 899.99,
-      stock: 18,
-      category: 'Electronics',
-      image: 'https://via.placeholder.com/80x80?text=Galaxy'
-    },
-    {
-      id: '3',
-      name: 'MacBook Air M2',
-      sku: 'MBA-M2-512GB',
-      barcode: '4567891230456',
-      price: 1199.99,
-      stock: 12,
-      category: 'Computers',
-      image: 'https://via.placeholder.com/80x80?text=MacBook'
-    }
-  ];
-
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) return;
-    
-    setIsSearching(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const results = mockProducts.filter(product => 
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.sku.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.barcode.includes(searchQuery)
-    );
-    
-    setSearchResults(results);
-    setIsSearching(false);
-  };
-
-  const handleScan = () => {
-    setIsScanning(true);
-    // Simulate scanning process
-    setTimeout(() => {
-      const randomBarcode = Math.random().toString(36).substring(2, 15);
-      setScannedCode(randomBarcode);
-      setIsScanning(false);
-      
-      // Auto-search for scanned product
-      setSearchQuery(randomBarcode);
-      handleSearch();
-    }, 2000);
-  };
-
-  const handleProductSelect = (product) => {
-    setSelectedProduct(product);
-    setQuantity(1);
-  };
-
-  const handleQuantityChange = (newQuantity) => {
-    if (newQuantity >= 1 && newQuantity <= selectedProduct.stock) {
-      setQuantity(newQuantity);
-    }
-  };
-
-  const handleAddToCart = () => {
-    // Add to cart logic here
-    console.log('Added to cart:', { product: selectedProduct, quantity });
-    // Navigate to next step or show success message
-  };
-
-  const renderStepContent = () => {
-    switch (step) {
-      case '8.0':
-        return (
-          <Box>
-            <Typography variant="h5" gutterBottom>Scan</Typography>
-
-            {/* Scanner area */}
-            <Card variant="outlined" sx={{ mb: 3 }}>
-              <CardContent>
-                <Box sx={{
-                  position: 'relative',
-                  height: 200,
-                  borderRadius: 2,
-                  bgcolor: 'grey.100',
-                  overflow: 'hidden',
-                  border: '2px dashed rgba(0,0,0,0.12)'
-                }}>
-                  <Box sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: 16,
-                    right: 16,
-                    height: 6,
-                    bgcolor: 'primary.main',
-                    borderRadius: 3,
-                    filter: 'blur(2px)'
-                  }} />
-                </Box>
-                {/* Zoom slider */}
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 2 }}>
-                  <Typography variant="body2">-</Typography>
-                  <Slider value={50} aria-label="Zoom" sx={{ flex: 1 }} />
-                  <Typography variant="body2">+</Typography>
-                </Box>
-                {/* Actions */}
-                <Box sx={{ display: 'flex', justifyContent: 'space-around', mt: 2 }}>
-                  <Box textAlign="center">
-                    <IconButton color="primary" onClick={() => navigate('/dashboard/scan-product/8.1')}><Add /></IconButton>
-                    <Typography variant="caption">Manual</Typography>
-                  </Box>
-                  <Box textAlign="center">
-                    <IconButton color="primary"><CameraAlt /></IconButton>
-                    <Typography variant="caption">Flashlight</Typography>
-                  </Box>
-                  <Box textAlign="center">
-                    <IconButton color="primary"><ShoppingCart /></IconButton>
-                    <Typography variant="caption">Batch</Typography>
-                  </Box>
-                </Box>
-              </CardContent>
-            </Card>
-            
-            {/* Search Section */}
-            <Card variant="outlined" sx={{ mb: 3 }}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Search
-                </Typography>
-                <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={12} md={8}>
-                    <TextField
-                      fullWidth
-                      label="Search by name, SKU, or barcode"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      variant="outlined"
-                      onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <Button
-                      fullWidth
-                      variant="contained"
-                      onClick={handleSearch}
-                      disabled={!searchQuery.trim() || isSearching}
-                      startIcon={isSearching ? <CircularProgress size={20} /> : <Search />}
-                      sx={{ py: 1.5 }}
-                    >
-                      {isSearching ? 'Searching...' : 'Search'}
-                    </Button>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-
-            {/* Live Match / Results */}
-            {searchResults.length > 0 && (
-              <Card variant="outlined">
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Live Match
-                  </Typography>
-                  <List>
-                    {searchResults.map((product) => (
-                      <React.Fragment key={product.id}>
-                        <ListItem 
-                          button 
-                          onClick={() => handleProductSelect(product)}
-                          sx={{ 
-                            borderRadius: 1,
-                            '&:hover': { bgcolor: 'action.hover' }
-                          }}
-                        >
-                          <ListItemAvatar>
-                            <Avatar src={product.image} alt={product.name} />
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary={product.name}
-                            secondary={
-                              <Box>
-                                <Typography variant="body2" color="text.secondary">
-                                  SKU: {product.sku} • Category: {product.category}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                  Price: ${product.price} • Stock: {product.stock}
-                                </Typography>
-                              </Box>
-                            }
-                          />
-                          <Chip 
-                            label={product.stock > 0 ? 'In Stock' : 'Out of Stock'} 
-                            color={product.stock > 0 ? 'success' : 'error'}
-                            size="small"
-                          />
-                        </ListItem>
-                        <Divider />
-                      </React.Fragment>
-                    ))}
-                  </List>
-                </CardContent>
-              </Card>
-            )}
-
-            {searchResults.length === 0 && searchQuery && !isSearching && (
-              <Alert severity="info">
-                No products found matching "{searchQuery}". Try a different search term.
-              </Alert>
-            )}
-          </Box>
+  const updateQuantity = (itemId, change) => {
+    setCartItems(items => {
+      const existingItem = items.find(item => item.id === itemId);
+      if (existingItem) {
+        const newQuantity = Math.max(0, existingItem.quantity + change);
+        if (newQuantity === 0) {
+          return items.filter(item => item.id !== itemId);
+        }
+        return items.map(item =>
+          item.id === itemId ? { ...item, quantity: newQuantity } : item
         );
-
-      case '8.1':
-        return (
-          <Box>
-            <Typography variant="h5" gutterBottom>
-              Product Details & Quantity
-            </Typography>
-            <Typography variant="body1" color="text.secondary" paragraph>
-              Review the selected product and specify the quantity you want to add.
-            </Typography>
-            
-            {selectedProduct ? (
-              <Card variant="outlined" sx={{ mb: 3 }}>
-                <CardContent>
-                  <Grid container spacing={3} alignItems="center">
-                    <Grid item xs={12} md={3}>
-                      <Avatar 
-                        src={selectedProduct.image} 
-                        alt={selectedProduct.name}
-                        sx={{ width: 120, height: 120, mx: 'auto' }}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={9}>
-                      <Typography variant="h5" gutterBottom>
-                        {selectedProduct.name}
-                      </Typography>
-                      <Typography variant="body1" color="text.secondary" paragraph>
-                        SKU: {selectedProduct.sku} • Category: {selectedProduct.category}
-                      </Typography>
-                      <Typography variant="h4" color="primary" gutterBottom>
-                        ${selectedProduct.price}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary" gutterBottom>
-                        Available Stock: {selectedProduct.stock} units
-                      </Typography>
-                      
-                      {/* Quantity Selector */}
-                      <Box display="flex" alignItems="center" mt={2}>
-                        <Typography variant="h6" mr={2}>
-                          Quantity:
-                        </Typography>
-                        <IconButton
-                          onClick={() => handleQuantityChange(quantity - 1)}
-                          disabled={quantity <= 1}
-                        >
-                          <Remove />
-                        </IconButton>
-                        <TextField
-                          value={quantity}
-                          onChange={(e) => {
-                            const newQty = parseInt(e.target.value) || 1;
-                            handleQuantityChange(newQty);
-                          }}
-                          variant="outlined"
-                          size="small"
-                          sx={{ width: 80, mx: 1 }}
-                          inputProps={{ min: 1, max: selectedProduct.stock }}
-                        />
-                        <IconButton
-                          onClick={() => handleQuantityChange(quantity + 1)}
-                          disabled={quantity >= selectedProduct.stock}
-                        >
-                          <Add />
-                        </IconButton>
-                      </Box>
-                      
-                      {/* Total Price */}
-                      <Typography variant="h6" color="primary" mt={2}>
-                        Total: ${(selectedProduct.price * quantity).toFixed(2)}
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            ) : (
-              <Alert severity="warning">
-                No product selected. Please go back and select a product first.
-              </Alert>
-            )}
-
-            {/* Action Buttons */}
-            <Box display="flex" justifyContent="space-between" mt={3}>
-              <Button
-                variant="outlined"
-                onClick={() => navigate('/dashboard/scan-product/8.0')}
-                startIcon={<ArrowBack />}
-              >
-                Back to Search
-              </Button>
-              <Button
-                variant="contained"
-                onClick={handleAddToCart}
-                disabled={!selectedProduct}
-                endIcon={<ShoppingCart />}
-                size="large"
-              >
-                Add to Cart
-              </Button>
-            </Box>
-          </Box>
-        );
-
-      default:
-        return null;
-    }
+      }
+      return items;
+    });
   };
+
+  const addToCart = (product) => {
+    setCartItems(items => {
+      const existingItem = items.find(item => item.id === product.id);
+      if (existingItem) {
+        return items.map(item =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      }
+      return [...items, { ...product, quantity: 1 }];
+    });
+  };
+
+  const viewCart = () => {
+    navigate('/dashboard/sales/new', { state: { cartItems } });
+  };
+
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
-        {/* Header */}
-        <Box mb={4}>
-          <Typography variant="h4" gutterBottom color="primary">
-            {step === '8.0' ? 'Product Scanner' : 'Product Details'}
+    <Container maxWidth="sm" sx={{ height: '100vh', display: 'flex', flexDirection: 'column', p: 0 }}>
+      {/* Header */}
+      <Box sx={{ display: 'flex', alignItems: 'center', p: 2, bgcolor: 'background.paper' }}>
+        <IconButton onClick={() => navigate(-1)}>
+          <ArrowBack />
+        </IconButton>
+        <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center', fontWeight: 'bold' }}>
+          Scan
+        </Typography>
+      </Box>
+
+      {/* Cart Summary */}
+      {totalItems > 0 && (
+        <Card sx={{ m: 2, borderRadius: 2 }} onClick={viewCart}>
+          <CardContent sx={{ py: 1.5 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                {totalItems} items in cart
+              </Typography>
+              <IconButton size="small">
+                <ShoppingCart />
+              </IconButton>
+            </Box>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Scanner View */}
+      <Box sx={{ flex: 1, position: 'relative', bgcolor: '#000', overflow: 'hidden' }}>
+        {/* Scanner Frame */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 250,
+            height: 250,
+            border: '2px solid white',
+            borderRadius: 2,
+            zIndex: 2,
+          }}
+        >
+          {/* Corner indicators */}
+          <Box
+            sx={{
+              position: 'absolute',
+              top: -2,
+              left: -2,
+              width: 20,
+              height: 20,
+              borderTop: '4px solid white',
+              borderLeft: '4px solid white',
+            }}
+          />
+          <Box
+            sx={{
+              position: 'absolute',
+              top: -2,
+              right: -2,
+              width: 20,
+              height: 20,
+              borderTop: '4px solid white',
+              borderRight: '4px solid white',
+            }}
+          />
+          <Box
+            sx={{
+              position: 'absolute',
+              bottom: -2,
+              left: -2,
+              width: 20,
+              height: 20,
+              borderBottom: '4px solid white',
+              borderLeft: '4px solid white',
+            }}
+          />
+          <Box
+            sx={{
+              position: 'absolute',
+              bottom: -2,
+              right: -2,
+              width: 20,
+              height: 20,
+              borderBottom: '4px solid white',
+              borderRight: '4px solid white',
+            }}
+          />
+        </Box>
+
+        {/* Scanning Line Animation */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 200,
+            height: 2,
+            bgcolor: 'primary.main',
+            opacity: 0.8,
+            animation: 'scan 2s ease-in-out infinite',
+            '@keyframes scan': {
+              '0%': { transform: 'translate(-50%, -150px)' },
+              '50%': { transform: 'translate(-50%, 0px)' },
+              '100%': { transform: 'translate(-50%, 150px)' },
+            },
+          }}
+        />
+
+        {/* Instructions */}
+        <Box
+          sx={{
+            position: 'absolute',
+            bottom: 120,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            textAlign: 'center',
+            color: 'white',
+            px: 2,
+          }}
+        >
+          <Typography variant="body1" sx={{ mb: 1 }}>
+            Move the product slowly to capture all angles.
           </Typography>
-          <Typography variant="body1" color="text.secondary">
-            {step === '8.0' ? 'Find products by scanning or searching' : 'Review and add products to cart'}
+          <Typography variant="body2">
+            Center the product in the guide box.
           </Typography>
         </Box>
 
-        {/* Step Content */}
-        {renderStepContent()}
+        {/* Bottom Controls */}
+        <Box
+          sx={{
+            position: 'absolute',
+            bottom: 20,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
+          }}
+        >
+          {/* Zoom Slider */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography variant="body2" sx={{ color: 'white' }}>-</Typography>
+            <Slider
+              defaultValue={50}
+              sx={{
+                width: 100,
+                color: 'white',
+                '& .MuiSlider-thumb': {
+                  bgcolor: 'primary.main',
+                },
+              }}
+            />
+            <Typography variant="body2" sx={{ color: 'white' }}>+</Typography>
+          </Box>
 
-        {/* Navigation */}
-        <Box display="flex" justifyContent="space-between" mt={4}>
-          <Button
-            variant="outlined"
-            onClick={() => navigate('/dashboard')}
-            startIcon={<ArrowBack />}
-          >
-            Back to Dashboard
-          </Button>
-          {step === '8.0' && searchResults.length > 0 && (
-            <Button
-              variant="contained"
-              onClick={() => navigate('/dashboard/scan-product/8.1')}
-              endIcon={<ArrowForward />}
-              disabled={!selectedProduct}
-            >
-              Continue
-            </Button>
-          )}
+          {/* Controls */}
+          <IconButton sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white' }}>
+            <Add />
+          </IconButton>
+          <IconButton sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white' }}>
+            <FlashlightOn />
+          </IconButton>
+          <IconButton sx={{ bgcolor: 'primary.main', color: 'white' }}>
+            <ShoppingCart />
+          </IconButton>
         </Box>
-      </Paper>
+      </Box>
+
+      {/* Live Matches */}
+      <Box sx={{ bgcolor: 'background.paper', p: 2 }}>
+        <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+          Live Match
+        </Typography>
+        <List sx={{ p: 0 }}>
+          {liveMatches.map((item) => {
+            const cartItem = cartItems.find(ci => ci.id === item.id);
+            const quantity = cartItem?.quantity || 0;
+
+            return (
+              <Card key={item.id} sx={{ mb: 1, borderRadius: 2 }}>
+                <CardContent sx={{ py: 1.5 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                      <Avatar sx={{ mr: 2, fontSize: '1.5rem', bgcolor: 'transparent' }}>
+                        {item.image}
+                      </Avatar>
+                      <Box>
+                        <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                          {item.name}
+                        </Typography>
+                        <Typography variant="body2" color="primary">
+                          ₦{item.price.toLocaleString()}
+                        </Typography>
+                      </Box>
+                    </Box>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      {quantity > 0 && (
+                        <>
+                          <IconButton
+                            size="small"
+                            onClick={() => updateQuantity(item.id, -1)}
+                          >
+                            <Remove />
+                          </IconButton>
+                          <Typography variant="body1" sx={{ minWidth: 20, textAlign: 'center' }}>
+                            {quantity}
+                          </Typography>
+                        </>
+                      )}
+                      <IconButton
+                        size="small"
+                        onClick={() => addToCart(item)}
+                        sx={{ bgcolor: 'primary.main', color: 'white' }}
+                      >
+                        <Add />
+                      </IconButton>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </List>
+      </Box>
     </Container>
   );
-};
+}
 
 export default ScanProduct;
-
-

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { getUsers, saveUser } from '../utils/localStorage';
 import {
   Box,
   Paper,
@@ -37,16 +38,7 @@ function Login() {
   };
 
   const loginUser = (user) => {
-    localStorage.setItem('isAuthenticated', 'true');
-    localStorage.setItem('currentUser', JSON.stringify({
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      company: user.company,
-      role: user.role,
-      provider: user.provider
-    }));
+    saveUser(user);
     navigate('/dashboard');
   };
 
@@ -195,8 +187,8 @@ function Login() {
               }}
             />
             <Box sx={{ width: '100%', textAlign: 'right', mt: 1 }}>
-              <Link to="/dashboard/forgot-password" style={{ textDecoration: 'none' }}>
-                <Typography variant="body2" color="primary">Forgot password?</Typography>
+              <Link to="/forgot-password" style={{ textDecoration: 'none' }}>
+                <Typography variant="body2" color="primary">Forgot Password?</Typography>
               </Link>
             </Box>
             <Button
