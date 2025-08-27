@@ -13,7 +13,9 @@ import {
   ListItem,
   Avatar,
   Slider,
-  Fab,
+  AppBar,
+  Toolbar,
+  Badge,
 } from '@mui/material';
 import {
   ArrowBack,
@@ -22,12 +24,16 @@ import {
   ShoppingCart,
   Remove,
   CropFree,
+  Notifications,
+  Delete,
+  HelpOutline,
 } from '@mui/icons-material';
 
 function ScanProduct() {
   const navigate = useNavigate();
   const [scannerActive, setScannerActive] = useState(true);
   const [cartItems, setCartItems] = useState([]);
+  const [currentTab, setCurrentTab] = useState(0);
   const [liveMatches] = useState([
     { id: 1, name: 'Handbag', price: 25000, image: '👜' },
     { id: 2, name: 'Running Shoe', price: 15500, image: '👟' },
@@ -71,132 +77,142 @@ function ScanProduct() {
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <Container maxWidth="sm" sx={{ height: '100vh', display: 'flex', flexDirection: 'column', p: 0 }}>
+    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#000' }}>
       {/* Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', p: 2, bgcolor: 'background.paper' }}>
-        <IconButton onClick={() => navigate(-1)}>
-          <ArrowBack />
-        </IconButton>
-        <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center', fontWeight: 'bold' }}>
-          Scan
-        </Typography>
-      </Box>
+      <AppBar position="static" sx={{ bgcolor: 'transparent', boxShadow: 'none' }}>
+        <Toolbar>
+          <IconButton edge="start" color="inherit" onClick={() => navigate(-1)}>
+            <ArrowBack />
+          </IconButton>
+          <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center', fontWeight: 'bold' }}>
+            Scan
+          </Typography>
+          <IconButton color="inherit">
+            <Notifications />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
 
       {/* Cart Summary */}
       {totalItems > 0 && (
-        <Card sx={{ m: 2, borderRadius: 2 }} onClick={viewCart}>
-          <CardContent sx={{ py: 1.5 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                {totalItems} items in cart
-              </Typography>
-              <IconButton size="small">
-                <ShoppingCart />
-              </IconButton>
-            </Box>
-          </CardContent>
-        </Card>
+        <Box sx={{ position: 'absolute', top: 80, left: 16, right: 16, zIndex: 10 }}>
+          <Card sx={{ borderRadius: 2 }} onClick={viewCart}>
+            <CardContent sx={{ py: 1.5 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                  {totalItems} items in cart
+                </Typography>
+                <IconButton size="small">
+                  <ArrowBack sx={{ transform: 'rotate(180deg)' }} />
+                </IconButton>
+              </Box>
+            </CardContent>
+          </Card>
+        </Box>
       )}
 
       {/* Scanner View */}
-      <Box sx={{ flex: 1, position: 'relative', bgcolor: '#000', overflow: 'hidden' }}>
+      <Box sx={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {/* Scanner Frame */}
         <Box
           sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 250,
-            height: 250,
-            border: '2px solid white',
-            borderRadius: 2,
-            zIndex: 2,
+            width: 280,
+            height: 280,
+            border: '3px solid white',
+            borderRadius: 3,
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
           {/* Corner indicators */}
           <Box
             sx={{
               position: 'absolute',
-              top: -2,
-              left: -2,
-              width: 20,
-              height: 20,
-              borderTop: '4px solid white',
-              borderLeft: '4px solid white',
+              top: -3,
+              left: -3,
+              width: 30,
+              height: 30,
+              borderTop: '6px solid white',
+              borderLeft: '6px solid white',
+              borderTopLeftRadius: 8,
             }}
           />
           <Box
             sx={{
               position: 'absolute',
-              top: -2,
-              right: -2,
-              width: 20,
-              height: 20,
-              borderTop: '4px solid white',
-              borderRight: '4px solid white',
+              top: -3,
+              right: -3,
+              width: 30,
+              height: 30,
+              borderTop: '6px solid white',
+              borderRight: '6px solid white',
+              borderTopRightRadius: 8,
             }}
           />
           <Box
             sx={{
               position: 'absolute',
-              bottom: -2,
-              left: -2,
-              width: 20,
-              height: 20,
-              borderBottom: '4px solid white',
-              borderLeft: '4px solid white',
+              bottom: -3,
+              left: -3,
+              width: 30,
+              height: 30,
+              borderBottom: '6px solid white',
+              borderLeft: '6px solid white',
+              borderBottomLeftRadius: 8,
             }}
           />
           <Box
             sx={{
               position: 'absolute',
-              bottom: -2,
-              right: -2,
-              width: 20,
-              height: 20,
-              borderBottom: '4px solid white',
-              borderRight: '4px solid white',
+              bottom: -3,
+              right: -3,
+              width: 30,
+              height: 30,
+              borderBottom: '6px solid white',
+              borderRight: '6px solid white',
+              borderBottomRightRadius: 8,
+            }}
+          />
+
+          {/* Scanning animation line */}
+          <Box
+            sx={{
+              position: 'absolute',
+              width: '80%',
+              height: 3,
+              bgcolor: '#1976d2',
+              borderRadius: 1,
+              animation: 'scan 2s ease-in-out infinite',
+              '@keyframes scan': {
+                '0%': { top: '10%', opacity: 0.8 },
+                '50%': { top: '50%', opacity: 1 },
+                '100%': { top: '90%', opacity: 0.8 },
+              },
             }}
           />
         </Box>
-
-        {/* Scanning Line Animation */}
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 200,
-            height: 2,
-            bgcolor: 'primary.main',
-            opacity: 0.8,
-            animation: 'scan 2s ease-in-out infinite',
-            '@keyframes scan': {
-              '0%': { transform: 'translate(-50%, -150px)' },
-              '50%': { transform: 'translate(-50%, 0px)' },
-              '100%': { transform: 'translate(-50%, 150px)' },
-            },
-          }}
-        />
 
         {/* Instructions */}
         <Box
           sx={{
             position: 'absolute',
-            bottom: 120,
+            bottom: 200,
             left: '50%',
             transform: 'translateX(-50%)',
             textAlign: 'center',
             color: 'white',
-            px: 2,
+            px: 4,
           }}
         >
-          <Typography variant="body1" sx={{ mb: 1 }}>
-            Move the product slowly to capture all angles.
+          <Typography variant="body1" sx={{ mb: 1, fontWeight: 500 }}>
+            Move the product slowly to capture
           </Typography>
-          <Typography variant="body2">
+          <Typography variant="body1" sx={{ mb: 1, fontWeight: 500 }}>
+            all angles.
+          </Typography>
+          <Typography variant="body2" sx={{ opacity: 0.8 }}>
             Center the product in the guide box.
           </Typography>
         </Box>
@@ -205,66 +221,96 @@ function ScanProduct() {
         <Box
           sx={{
             position: 'absolute',
-            bottom: 20,
+            bottom: 140,
             left: '50%',
             transform: 'translateX(-50%)',
             display: 'flex',
             alignItems: 'center',
-            gap: 2,
+            gap: 3,
           }}
         >
           {/* Zoom Slider */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Typography variant="body2" sx={{ color: 'white' }}>-</Typography>
+            <Typography variant="body2" sx={{ color: 'white', fontSize: '18px' }}>-</Typography>
             <Slider
               defaultValue={50}
               sx={{
-                width: 100,
+                width: 120,
                 color: 'white',
                 '& .MuiSlider-thumb': {
-                  bgcolor: 'primary.main',
+                  bgcolor: '#1976d2',
+                  width: 20,
+                  height: 20,
+                },
+                '& .MuiSlider-track': {
+                  bgcolor: 'white',
+                },
+                '& .MuiSlider-rail': {
+                  bgcolor: 'rgba(255,255,255,0.3)',
                 },
               }}
             />
-            <Typography variant="body2" sx={{ color: 'white' }}>+</Typography>
+            <Typography variant="body2" sx={{ color: 'white', fontSize: '18px' }}>+</Typography>
           </Box>
 
-          {/* Controls */}
-          <IconButton sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white' }}>
+          {/* Control Buttons */}
+          <IconButton 
+            sx={{ 
+              bgcolor: 'rgba(255,255,255,0.2)', 
+              color: 'white',
+              width: 48,
+              height: 48,
+            }}
+          >
             <Add />
           </IconButton>
-          <IconButton sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white' }}>
+          <IconButton 
+            sx={{ 
+              bgcolor: 'rgba(255,255,255,0.2)', 
+              color: 'white',
+              width: 48,
+              height: 48,
+            }}
+          >
             <FlashlightOn />
           </IconButton>
-          <IconButton sx={{ bgcolor: 'primary.main', color: 'white' }}>
+          <IconButton 
+            sx={{ 
+              bgcolor: '#1976d2', 
+              color: 'white',
+              width: 56,
+              height: 56,
+            }}
+          >
             <ShoppingCart />
           </IconButton>
         </Box>
       </Box>
 
-      {/* Live Matches */}
-      <Box sx={{ bgcolor: 'background.paper', p: 2 }}>
-        <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
-          Live Match
-        </Typography>
-        <List sx={{ p: 0 }}>
+      {/* Live Matches Section */}
+      <Box sx={{ bgcolor: 'white', minHeight: 300, borderTopLeftRadius: 20, borderTopRightRadius: 20 }}>
+        <Container maxWidth="sm" sx={{ py: 3 }}>
+          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+            Live Match
+          </Typography>
+          
           {liveMatches.map((item) => {
             const cartItem = cartItems.find(ci => ci.id === item.id);
             const quantity = cartItem?.quantity || 0;
 
             return (
-              <Card key={item.id} sx={{ mb: 1, borderRadius: 2 }}>
-                <CardContent sx={{ py: 1.5 }}>
+              <Card key={item.id} sx={{ mb: 2, borderRadius: 2, border: '1px solid #e0e0e0' }}>
+                <CardContent sx={{ py: 2 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
-                      <Avatar sx={{ mr: 2, fontSize: '1.5rem', bgcolor: 'transparent' }}>
+                      <Avatar sx={{ mr: 2, width: 50, height: 50, fontSize: '1.8rem', bgcolor: 'transparent' }}>
                         {item.image}
                       </Avatar>
                       <Box>
-                        <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                        <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 0.5 }}>
                           {item.name}
                         </Typography>
-                        <Typography variant="body2" color="primary">
+                        <Typography variant="h6" sx={{ color: 'text.primary', fontWeight: 'bold' }}>
                           ₦{item.price.toLocaleString()}
                         </Typography>
                       </Box>
@@ -276,10 +322,24 @@ function ScanProduct() {
                           <IconButton
                             size="small"
                             onClick={() => updateQuantity(item.id, -1)}
+                            sx={{ 
+                              bgcolor: '#f5f5f5',
+                              width: 32,
+                              height: 32,
+                            }}
                           >
-                            <Remove />
+                            <Remove fontSize="small" />
                           </IconButton>
-                          <Typography variant="body1" sx={{ minWidth: 20, textAlign: 'center' }}>
+                          <Typography variant="body1" sx={{ 
+                            minWidth: 30, 
+                            textAlign: 'center',
+                            fontWeight: 'bold',
+                            bgcolor: '#1976d2',
+                            color: 'white',
+                            borderRadius: 1,
+                            px: 1,
+                            py: 0.5,
+                          }}>
                             {quantity}
                           </Typography>
                         </>
@@ -287,9 +347,17 @@ function ScanProduct() {
                       <IconButton
                         size="small"
                         onClick={() => addToCart(item)}
-                        sx={{ bgcolor: 'primary.main', color: 'white' }}
+                        sx={{ 
+                          bgcolor: '#1976d2', 
+                          color: 'white',
+                          width: 32,
+                          height: 32,
+                          '&:hover': {
+                            bgcolor: '#1565c0',
+                          },
+                        }}
                       >
-                        <Add />
+                        <Add fontSize="small" />
                       </IconButton>
                     </Box>
                   </Box>
@@ -297,9 +365,9 @@ function ScanProduct() {
               </Card>
             );
           })}
-        </List>
+        </Container>
       </Box>
-    </Container>
+    </Box>
   );
 }
 

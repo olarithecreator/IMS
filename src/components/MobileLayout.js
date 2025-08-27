@@ -2,39 +2,20 @@ import React from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
-  AppBar,
-  Toolbar,
-  Typography,
-  IconButton,
   BottomNavigation,
   BottomNavigationAction,
-  Badge,
-  Avatar,
   Paper,
 } from '@mui/material';
 import {
-  ArrowBack,
-  Notifications,
-  Menu as MenuIcon,
   Home,
   QrCodeScanner,
   Inventory2,
   Assessment,
-  AccountCircle,
 } from '@mui/icons-material';
 
-function MobileLayout({ 
-  title = "Dashboard", 
-  showBackButton = false, 
-  showBottomNav = true,
-  rightAction = null 
-}) {
+function MobileLayout() {
   const navigate = useNavigate();
   const location = useLocation();
-  
-  const handleBackClick = () => {
-    navigate(-1);
-  };
 
   const bottomNavItems = [
     { label: 'Home', icon: <Home />, path: '/dashboard' },
@@ -45,6 +26,7 @@ function MobileLayout({
 
   const getCurrentBottomNavValue = () => {
     const path = location.pathname;
+    if (path === '/dashboard' || path === '/dashboard/') return 0;
     if (path.includes('/scan')) return 1;
     if (path.includes('/product')) return 2;
     if (path.includes('/sales')) return 3;
@@ -52,46 +34,13 @@ function MobileLayout({
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      {/* Top AppBar */}
-      <AppBar position="fixed" sx={{ zIndex: 1300 }}>
-        <Toolbar>
-          {showBackButton && (
-            <IconButton
-              edge="start"
-              color="inherit"
-              onClick={handleBackClick}
-              sx={{ mr: 2 }}
-            >
-              <ArrowBack />
-            </IconButton>
-          )}
-          
-          <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center' }}>
-            {title}
-          </Typography>
-          
-          {rightAction || (
-            <IconButton
-              edge="end"
-              color="inherit"
-              onClick={() => navigate('/dashboard/notifications')}
-            >
-              <Badge badgeContent={4} color="error">
-                <Notifications />
-              </Badge>
-            </IconButton>
-          )}
-        </Toolbar>
-      </AppBar>
-
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', bgcolor: '#fafafa' }}>
       {/* Main Content */}
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          pt: 8, // AppBar height
-          pb: showBottomNav ? 8 : 2, // BottomNav height
+          pb: 10, // Space for bottom navigation
           overflow: 'auto',
         }}
       >
@@ -99,28 +48,49 @@ function MobileLayout({
       </Box>
 
       {/* Bottom Navigation */}
-      {showBottomNav && (
-        <Paper
-          sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1300 }}
-          elevation={3}
+      <Paper
+        sx={{ 
+          position: 'fixed', 
+          bottom: 0, 
+          left: 0, 
+          right: 0, 
+          zIndex: 1300,
+          borderTop: '1px solid #e0e0e0',
+        }}
+        elevation={0}
+      >
+        <BottomNavigation
+          value={getCurrentBottomNavValue()}
+          onChange={(event, newValue) => {
+            navigate(bottomNavItems[newValue].path);
+          }}
+          showLabels
+          sx={{
+            height: 80,
+            '& .MuiBottomNavigationAction-root': {
+              color: '#9e9e9e',
+              '&.Mui-selected': {
+                color: '#1976d2',
+              },
+            },
+          }}
         >
-          <BottomNavigation
-            value={getCurrentBottomNavValue()}
-            onChange={(event, newValue) => {
-              navigate(bottomNavItems[newValue].path);
-            }}
-            showLabels
-          >
-            {bottomNavItems.map((item, index) => (
-              <BottomNavigationAction
-                key={item.label}
-                label={item.label}
-                icon={item.icon}
-              />
-            ))}
-          </BottomNavigation>
-        </Paper>
-      )}
+          {bottomNavItems.map((item, index) => (
+            <BottomNavigationAction
+              key={item.label}
+              label={item.label}
+              icon={item.icon}
+              sx={{
+                minWidth: 'auto',
+                '& .MuiBottomNavigationAction-label': {
+                  fontSize: '0.75rem',
+                  fontWeight: 500,
+                },
+              }}
+            />
+          ))}
+        </BottomNavigation>
+      </Paper>
     </Box>
   );
 }
