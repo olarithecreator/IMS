@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
+import StoreSwitcher from './StoreSwitcher';
 import {
   Box,
   AppBar,
@@ -230,6 +231,11 @@ function GlobalResponsiveLayout() {
             />
           </Box>
         </Box>
+        
+        {/* Store Switcher for Desktop */}
+        <Box sx={{ mt: 2 }}>
+          <StoreSwitcher />
+        </Box>
       </Box>
 
       {/* Navigation Menu */}
@@ -345,6 +351,11 @@ function GlobalResponsiveLayout() {
             >
               {getPageTitle()}
             </Typography>
+            
+            {/* Store Switcher for Mobile */}
+            <Box sx={{ mr: 1 }}>
+              <StoreSwitcher />
+            </Box>
             
             <IconButton 
               color="inherit"

@@ -49,7 +49,17 @@ import {
   Business,
   Close,
 } from '@mui/icons-material';
-import { getCurrentUser, getCompanies, saveCompany } from '../utils/localStorage';
+import { 
+  getCurrentUser, 
+  getCompanies, 
+  saveCompany, 
+  getUserStores, 
+  createStore, 
+  updateStore, 
+  deleteStore,
+  getCurrentStore,
+  setCurrentStore 
+} from '../utils/localStorage';
 
 function StoreManagement() {
   const theme = useTheme();
@@ -87,20 +97,21 @@ function StoreManagement() {
       const user = getCurrentUser();
       setCurrentUser(user);
       
-      const companiesData = getCompanies();
-      setCompanies(companiesData);
-      
-      // Find user's company and stores
-      const userCompany = companiesData.find(c => c.owner === user?.id || c.id === user?.companyId);
-      if (userCompany) {
-        setStores(userCompany.stores || []);
-      }
+      const userStores = getUserStores();
+      setStores(userStores);
       
       setLoading(false);
     } catch (error) {
       console.error('Error loading store data:', error);
       setLoading(false);
     }
+  };
+
+  const handleSwitchToStore = (store) => {
+    setCurrentStore(store.id);
+    handleMenuClose();
+    // Refresh the page to update store context
+    window.location.reload();
   };
 
   const handleOpenDialog = (store = null) => {
@@ -149,54 +160,24 @@ function StoreManagement() {
 
   const handleSaveStore = () => {
     try {
-      const user = getCurrentUser();
-      const companiesData = getCompanies();
-      const userCompany = companiesData.find(c => c.owner === user?.id || c.id === user?.companyId);
-      
-      if (!userCompany) {
-        alert('Company not found');
-        return;
-      }
-
-      const newStore = {
-        id: editingStore ? editingStore.id : Date.now(),
+      const storeData = {
         name: storeForm.name,
         address: storeForm.address,
         phone: storeForm.phone,
         email: storeForm.email,
-        managerId: storeForm.managerId || user.id,
+        managerId: storeForm.managerId || currentUser.id,
         description: storeForm.description,
         type: storeForm.type,
         status: storeForm.status,
-        createdAt: editingStore ? editingStore.createdAt : new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
       };
 
-      let updatedStores = userCompany.stores || [];
-      
       if (editingStore) {
         // Update existing store
-        updatedStores = updatedStores.map(store => 
-          store.id === editingStore.id ? newStore : store
-        );
+        updateStore(editingStore.id, storeData);
       } else {
-        // Add new store
-        updatedStores.push(newStore);
+        // Create new store
+        createStore(storeData);
       }
-
-      // Update company with new stores
-      const updatedCompany = {
-        ...userCompany,
-        stores: updatedStores,
-        updatedAt: new Date().toISOString(),
-      };
-
-      // Save to companies array
-      const updatedCompanies = companiesData.map(c => 
-        c.id === userCompany.id ? updatedCompany : c
-      );
-      
-      localStorage.setItem('companies', JSON.stringify(updatedCompanies));
       
       // Reload data
       loadData();
@@ -215,25 +196,9 @@ function StoreManagement() {
 
   const confirmDeleteStore = () => {
     try {
-      const user = getCurrentUser();
-      const companiesData = getCompanies();
-      const userCompany = companiesData.find(c => c.owner === user?.id || c.id === user?.companyId);
-      
-      if (!userCompany || !storeToDelete) return;
+      if (!storeToDelete) return;
 
-      const updatedStores = userCompany.stores.filter(store => store.id !== storeToDelete.id);
-      
-      const updatedCompany = {
-        ...userCompany,
-        stores: updatedStores,
-        updatedAt: new Date().toISOString(),
-      };
-
-      const updatedCompanies = companiesData.map(c => 
-        c.id === userCompany.id ? updatedCompany : c
-      );
-      
-      localStorage.setItem('companies', JSON.stringify(updatedCompanies));
+      deleteStore(storeToDelete.id);
       
       loadData();
       setDeleteDialog(false);
@@ -509,7 +474,16 @@ function StoreManagement() {
         }}
       >
         <MenuList>
-          <MenuItem onClick={() => { handleOpenDialog(selectedStore); handleMenuClose(); }}>
+          <MenuItem onClick={() => handleSwitchToStore(selectedStore)}>
+            <ListItemIcon><Store fontSize="small" color="primary" /></ListItemIcon>
+            <ListItemText primary={
+              <Typography variant="body2" sx={{ color: 'primary.main', fontWeight: 600 }}>
+                Switch to Store
+              </Typography>
+            } />
+          </MenuItem>
+          <Divider />
+          <MenuItem onClick={() => { navigate(`/dashboard/stores/${selectedStore?.id}`); handleMenuClose(); }}>
             <ListItemIcon><Visibility fontSize="small" /></ListItemIcon>
             <ListItemText>View Details</ListItemText>
           </MenuItem>

@@ -224,13 +224,22 @@ function StoreDetails() {
                 </Box>
               </Box>
               
-              <Button
-                variant="outlined"
-                startIcon={<Edit />}
-                onClick={() => navigate(`/dashboard/stores/edit/${store.id}`)}
-              >
-                Edit Store
-              </Button>
+              <Stack direction="row" spacing={1}>
+                <Button
+                  variant="outlined"
+                  startIcon={<Group />}
+                  onClick={() => navigate(`/dashboard/stores/${store.id}/staff`)}
+                >
+                  Manage Staff
+                </Button>
+                <Button
+                  variant="outlined"
+                  startIcon={<Edit />}
+                  onClick={() => navigate(`/dashboard/stores/edit/${store.id}`)}
+                >
+                  Edit Store
+                </Button>
+              </Stack>
             </Box>
 
             <Grid container spacing={3}>

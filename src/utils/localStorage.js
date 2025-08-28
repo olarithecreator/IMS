@@ -352,6 +352,189 @@ export const updateCompany = (companyId, updates) => {
   return updatedCompanies.find(c => c.id === companyId);
 };
 
+// Store Context Management
+export const getCurrentStore = () => {
+  const currentStoreId = localStorage.getItem('currentStoreId');
+  if (!currentStoreId) return null;
+  
+  const user = getCurrentUser();
+  if (!user) return null;
+  
+  const companies = getCompanies();
+  const userCompany = companies.find(c => c.owner === user.id || c.id === user.companyId);
+  
+  if (!userCompany || !userCompany.stores) return null;
+  
+  return userCompany.stores.find(store => store.id === parseInt(currentStoreId));
+};
+
+export const setCurrentStore = (storeId) => {
+  localStorage.setItem('currentStoreId', storeId.toString());
+};
+
+export const getUserStores = () => {
+  const user = getCurrentUser();
+  if (!user) return [];
+  
+  const companies = getCompanies();
+  const userCompany = companies.find(c => c.owner === user.id || c.id === user.companyId);
+  
+  return userCompany?.stores || [];
+};
+
+export const getStoreById = (storeId) => {
+  const stores = getUserStores();
+  return stores.find(store => store.id === parseInt(storeId));
+};
+
+export const createStore = (storeData) => {
+  const user = getCurrentUser();
+  if (!user) throw new Error('User not found');
+  
+  const companies = getCompanies();
+  const userCompany = companies.find(c => c.owner === user.id || c.id === user.companyId);
+  
+  if (!userCompany) throw new Error('Company not found');
+  
+  const newStore = {
+    id: Date.now(),
+    ...storeData,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    staff: [],
+    managers: [],
+  };
+  
+  const updatedStores = [...(userCompany.stores || []), newStore];
+  
+  const updatedCompany = {
+    ...userCompany,
+    stores: updatedStores,
+    updatedAt: new Date().toISOString(),
+  };
+  
+  const updatedCompanies = companies.map(c => 
+    c.id === userCompany.id ? updatedCompany : c
+  );
+  
+  localStorage.setItem('companies', JSON.stringify(updatedCompanies));
+  
+  return newStore;
+};
+
+export const updateStore = (storeId, updates) => {
+  const user = getCurrentUser();
+  if (!user) throw new Error('User not found');
+  
+  const companies = getCompanies();
+  const userCompany = companies.find(c => c.owner === user.id || c.id === user.companyId);
+  
+  if (!userCompany) throw new Error('Company not found');
+  
+  const updatedStores = userCompany.stores.map(store => 
+    store.id === parseInt(storeId) 
+      ? { ...store, ...updates, updatedAt: new Date().toISOString() }
+      : store
+  );
+  
+  const updatedCompany = {
+    ...userCompany,
+    stores: updatedStores,
+    updatedAt: new Date().toISOString(),
+  };
+  
+  const updatedCompanies = companies.map(c => 
+    c.id === userCompany.id ? updatedCompany : c
+  );
+  
+  localStorage.setItem('companies', JSON.stringify(updatedCompanies));
+  
+  return updatedStores.find(store => store.id === parseInt(storeId));
+};
+
+export const deleteStore = (storeId) => {
+  const user = getCurrentUser();
+  if (!user) throw new Error('User not found');
+  
+  const companies = getCompanies();
+  const userCompany = companies.find(c => c.owner === user.id || c.id === user.companyId);
+  
+  if (!userCompany) throw new Error('Company not found');
+  
+  const updatedStores = userCompany.stores.filter(store => store.id !== parseInt(storeId));
+  
+  const updatedCompany = {
+    ...userCompany,
+    stores: updatedStores,
+    updatedAt: new Date().toISOString(),
+  };
+  
+  const updatedCompanies = companies.map(c => 
+    c.id === userCompany.id ? updatedCompany : c
+  );
+  
+  localStorage.setItem('companies', JSON.stringify(updatedCompanies));
+  
+  // If this was the current store, switch to another store or clear
+  const currentStoreId = localStorage.getItem('currentStoreId');
+  if (currentStoreId === storeId.toString()) {
+    if (updatedStores.length > 0) {
+      setCurrentStore(updatedStores[0].id);
+    } else {
+      localStorage.removeItem('currentStoreId');
+    }
+  }
+  
+  return true;
+};
+
+// Store Staff Management
+export const addStaffToStore = (storeId, staffData) => {
+  const store = getStoreById(storeId);
+  if (!store) throw new Error('Store not found');
+  
+  const newStaffMember = {
+    id: Date.now(),
+    ...staffData,
+    storeId: parseInt(storeId),
+    createdAt: new Date().toISOString(),
+  };
+  
+  const updatedStaff = [...(store.staff || []), newStaffMember];
+  
+  updateStore(storeId, { staff: updatedStaff });
+  
+  return newStaffMember;
+};
+
+export const getStoreStaff = (storeId) => {
+  const store = getStoreById(storeId);
+  return store?.staff || [];
+};
+
+export const getStoreManagers = (storeId) => {
+  const store = getStoreById(storeId);
+  return store?.managers || [];
+};
+
+export const addManagerToStore = (storeId, managerData) => {
+  const store = getStoreById(storeId);
+  if (!store) throw new Error('Store not found');
+  
+  const newManager = {
+    id: Date.now(),
+    ...managerData,
+    storeId: parseInt(storeId),
+    createdAt: new Date().toISOString(),
+  };
+  
+  const updatedManagers = [...(store.managers || []), newManager];
+  
+  updateStore(storeId, { managers: updatedManagers });
+  
+  return newManager;
+};
+
 // Request Management
 export const getManagerRequests = () => {
   return JSON.parse(localStorage.getItem('managerRequests') || '[]');

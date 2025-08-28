@@ -19,11 +19,13 @@ import {
   Add,
   Store,
 } from '@mui/icons-material';
-import { getCurrentUser, getProducts, getSales, initializeUserData } from '../utils/localStorage';
+import { getCurrentUser, getProducts, getSales, initializeUserData, getCurrentStore, getUserStores } from '../utils/localStorage';
 
 function SimpleDashboard() {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(null);
+  const [currentStore, setCurrentStore] = useState(null);
+  const [userStores, setUserStores] = useState([]);
   const [stats, setStats] = useState({
     products: 0,
     sales: 0,
@@ -40,6 +42,14 @@ function SimpleDashboard() {
       const user = getCurrentUser();
       console.log('SimpleDashboard: Current user:', user);
       setCurrentUser(user);
+
+      // Get store context
+      const store = getCurrentStore();
+      const stores = getUserStores();
+      console.log('SimpleDashboard: Current store:', store);
+      console.log('SimpleDashboard: User stores:', stores);
+      setCurrentStore(store);
+      setUserStores(stores);
 
       // Initialize data for user
       if (user?.id) {
@@ -101,9 +111,27 @@ function SimpleDashboard() {
 
   return (
     <Box sx={{ width: '100%', p: 2 }}>
-      <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 3 }}>
-        Welcome, {currentUser?.firstName || 'User'}!
-      </Typography>
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1 }}>
+          Welcome, {currentUser?.firstName || 'User'}!
+        </Typography>
+        {currentStore && (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+            <Store sx={{ color: 'primary.main', fontSize: 20 }} />
+            <Typography variant="h6" color="primary.main" sx={{ fontWeight: 600 }}>
+              {currentStore.name}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              • {currentStore.type || 'Store'} • {currentStore.status || 'Active'}
+            </Typography>
+          </Box>
+        )}
+        {userStores.length > 1 && (
+          <Typography variant="body2" color="text.secondary">
+            You have {userStores.length} stores. Use the store switcher to view other locations.
+          </Typography>
+        )}
+      </Box>
 
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12} sm={6} md={3}>

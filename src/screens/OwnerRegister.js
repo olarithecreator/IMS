@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { getUsers, saveUser } from '../utils/localStorage';
+import { getUsers, saveUser, setCurrentStore } from '../utils/localStorage';
 import {
   Box,
   Paper,
@@ -122,16 +122,25 @@ function OwnerRegister() {
     };
 
     // Create company/store record
+    const storeId = Date.now() + 1; // Ensure unique ID
     const company = {
       id: newUser.companyId,
       name: formData.companyName.trim(),
       owner: newUser.id,
       stores: [{
-        id: Date.now(),
+        id: storeId,
         name: formData.storeName.trim(),
         address: formData.address.trim(),
         phone: formData.phone.trim(),
+        email: formData.email.trim(),
         managerId: newUser.id,
+        type: 'retail',
+        status: 'active',
+        description: 'Main store location',
+        staff: [],
+        managers: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       }],
       createdAt: new Date().toISOString(),
     };
@@ -145,6 +154,9 @@ function OwnerRegister() {
       const companies = JSON.parse(localStorage.getItem('companies') || '[]');
       companies.push(company);
       localStorage.setItem('companies', JSON.stringify(companies));
+
+      // Set the newly created store as the current store
+      setCurrentStore(storeId);
 
       setSuccess('Business account created successfully! Please login to continue.');
       

@@ -48,6 +48,7 @@ import Receipt from './screens/Receipt';
 import StoreManager from './screens/StoreManager';
 import StoreManagement from './screens/StoreManagement';
 import StoreDetails from './screens/StoreDetails';
+import StoreStaffManagement from './screens/StoreStaffManagement';
 import ForgotPassword from './screens/ForgotPassword';
 import ResetPassword from './screens/ResetPassword';
 import RoleSelection from './screens/RoleSelection';
@@ -126,6 +127,7 @@ function App() {
           <Route path="stores" element={<StoreManagement />} />
           <Route path="stores/add" element={<StoreManager />} />
           <Route path="stores/:storeId" element={<StoreDetails />} />
+          <Route path="stores/:storeId/staff" element={<StoreStaffManagement />} />
           <Route path="stores/edit/:storeId" element={<StoreManager />} />
           <Route path="staff" element={<RolesAndStaff />} />
           <Route path="staff/add" element={<AddStaff />} />
