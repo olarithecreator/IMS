@@ -52,7 +52,7 @@ function GlobalResponsiveLayout() {
   const location = useLocation();
   
   // Global responsive breakpoints
-  const isMobile = useMediaQuery(theme.breakpoints.down('md')); // < 768px
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg')); // < 992px
   const isTablet = useMediaQuery(theme.breakpoints.between('md', 'lg')); // 768px - 992px
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg')); // >= 992px
   const isLargeDesktop = useMediaQuery(theme.breakpoints.up('xl')); // >= 1200px

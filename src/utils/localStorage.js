@@ -431,12 +431,18 @@ export const initializeDefaultData = () => {
 
 // Initialize sample data for new users
 export const initializeUserData = (userId) => {
+  console.log('Initializing user data for user:', userId);
+  
   // Check if user already has data
   const products = getProducts();
   const sales = getSales();
   
+  console.log('Current products count:', products.length);
+  console.log('Current sales count:', sales.length);
+  
   // If no data exists, create sample data
   if (products.length === 0) {
+    console.log('Creating sample products...');
     const sampleProducts = [
       {
         id: 1,
@@ -570,10 +576,12 @@ export const initializeUserData = (userId) => {
       },
     ];
     
+    console.log('Saving', sampleProducts.length, 'sample products to localStorage');
     localStorage.setItem('products', JSON.stringify(sampleProducts));
   }
   
   if (sales.length === 0) {
+    console.log('Creating sample sales...');
     const sampleSales = [
       {
         id: 1,
@@ -611,6 +619,9 @@ export const initializeUserData = (userId) => {
       },
     ];
     
+    console.log('Saving', sampleSales.length, 'sample sales to localStorage');
     localStorage.setItem('sales', JSON.stringify(sampleSales));
   }
+  
+  console.log('User data initialization complete');
 };

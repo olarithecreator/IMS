@@ -1,14 +1,9 @@
 import React from 'react';
-import { useMediaQuery, useTheme } from '@mui/material';
-import ResponsiveDashboard from '../screens/ResponsiveDashboard';
-import DesktopDashboard from '../screens/DesktopDashboard';
+import SimpleDashboard from '../screens/SimpleDashboard';
 
 function DashboardSwitch() {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-
-  // Use ResponsiveDashboard for mobile, DesktopDashboard for desktop
-  return isMobile ? <ResponsiveDashboard /> : <DesktopDashboard />;
+  // Use SimpleDashboard for reliable data loading and debugging
+  return <SimpleDashboard />;
 }
 
 export default DashboardSwitch;
