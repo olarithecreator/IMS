@@ -1,16 +1,21 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { Box } from '@mui/material';
+import { Box, ThemeProvider, CssBaseline } from '@mui/material';
 import { initializeDefaultData, isAuthenticated } from './utils/localStorage';
+import theme from './theme';
 import Layout from './components/Layout';
 import MobileLayout from './components/MobileLayout';
+import ResponsiveLayout from './components/ResponsiveLayout';
 import Onboarding from './screens/Onboarding';
 import Register from './screens/Register';
 import Login from './screens/Login';
+import ResponsiveLogin from './screens/ResponsiveLogin';
 import StoreSetup from './screens/StoreSetup';
 import Dashboard from './screens/Dashboard';
+import ResponsiveDashboard from './screens/ResponsiveDashboard';
 import ScanProduct from './screens/ScanProduct';
 import ProductPage from './screens/ProductPage';
+import ResponsiveProductPage from './screens/ResponsiveProductPage';
 import Sales from './screens/Sales';
 import Notifications from './screens/Notifications';
 import Stores from './screens/Stores';
@@ -56,8 +61,10 @@ function App() {
   }, []);
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <Routes>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box sx={{ display: 'flex' }}>
+        <Routes>
         {/* Onboarding Routes (1.0 to 2.3) */}
         <Route path="/" element={<Onboarding />} />
         <Route path="/onboarding/:step" element={<Onboarding />} />
@@ -72,22 +79,22 @@ function App() {
         {/* Verification removed: email-based registration only */}
         
         {/* Login Route (5) */}
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<ResponsiveLogin />} />
         
         {/* Store Setup Route (6) */}
         <Route path="/store-setup" element={<StoreSetup />} />
         
         {/* Protected routes with mobile layout */}
-        <Route path="/dashboard" element={<ProtectedRoute><MobileLayout /></ProtectedRoute>}>
+        <Route path="/dashboard" element={<ProtectedRoute><ResponsiveLayout /></ProtectedRoute>}>
           {/* Dashboard Routes */}
-          <Route index element={<Dashboard />} />
+          <Route index element={<ResponsiveDashboard />} />
           
           {/* Scan Product Routes */}
           <Route path="scan" element={<ScanProduct />} />
           <Route path="scan/:step" element={<ScanProduct />} />
           
           {/* Product Routes */}
-          <Route path="products" element={<ProductPage />} />
+          <Route path="products" element={<ResponsiveProductPage />} />
           <Route path="products/:step" element={<ProductPage />} />
           <Route path="product-details/:id" element={<ProductDetails />} />
           <Route path="add-product" element={<AddProduct />} />
@@ -133,8 +140,9 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/confirm-invite" element={<ConfirmInvite />} />
         <Route path="/staff-login" element={<StaffPinLogin />} />
-      </Routes>
-    </Box>
+        </Routes>
+      </Box>
+    </ThemeProvider>
   );
 }
 
