@@ -46,7 +46,7 @@ import {
   TrendingUp,
   TrendingDown,
 } from '@mui/icons-material';
-import { getProducts, getCurrentUser, getSettings } from '../utils/localStorage';
+import { getProducts, getCurrentUser, getSettings, getStoreProducts, getCurrentStore, deleteProduct } from '../utils/localStorage';
 
 // Product Card Component
 const ProductCard = ({ product, onEdit, onView, onDelete, viewMode = 'grid' }) => {
@@ -261,15 +261,27 @@ function ResponsiveProductPage() {
   const [viewMode, setViewMode] = useState('grid');
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
+  const [currentStore, setCurrentStore] = useState(null);
 
   useEffect(() => {
     // Load data
     const user = getCurrentUser();
     setCurrentUser(user);
     
-    const productData = getProducts();
-    setProducts(productData);
-    setFilteredProducts(productData);
+    const store = getCurrentStore();
+    setCurrentStore(store);
+    
+    if (store) {
+      const storeProductData = getStoreProducts(store.id);
+      setProducts(storeProductData);
+      setFilteredProducts(storeProductData);
+    } else {
+      // Fallback to all products if no store context
+      const productData = getProducts();
+      setProducts(productData);
+      setFilteredProducts(productData);
+    }
+    
     setLoading(false);
   }, []);
 
@@ -319,6 +331,33 @@ function ResponsiveProductPage() {
 
   const handleProductEdit = (product) => {
     navigate(`/dashboard/products/edit/${product.id}`);
+  };
+
+  const handleDeleteProduct = async (product) => {
+    if (window.confirm(`Are you sure you want to delete "${product.name}"?`)) {
+      try {
+        deleteProduct(product.id);
+        // Refresh products list
+        const store = getCurrentStore();
+        if (store) {
+          const storeProductData = getStoreProducts(store.id);
+          setProducts(storeProductData);
+          setFilteredProducts(storeProductData);
+        }
+      } catch (error) {
+        console.error('Error deleting product:', error);
+        alert('Failed to delete product');
+      }
+    }
+  };
+
+  const refreshProducts = () => {
+    const store = getCurrentStore();
+    if (store) {
+      const storeProductData = getStoreProducts(store.id);
+      setProducts(storeProductData);
+      setFilteredProducts(storeProductData);
+    }
   };
 
   const handleProductDelete = (product) => {

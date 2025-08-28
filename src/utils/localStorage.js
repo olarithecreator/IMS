@@ -34,19 +34,33 @@ export const logout = () => {
 };
 
 // Product Management
-export const saveProduct = (product) => {
+export const saveProduct = (product, storeId = null) => {
   const products = getProducts();
+  const currentStoreId = storeId || getCurrentStore()?.id;
+  
+  if (!currentStoreId) {
+    throw new Error('No store context available');
+  }
+  
+  const productWithStore = {
+    ...product,
+    storeId: parseInt(currentStoreId),
+    updatedAt: new Date().toISOString()
+  };
+  
   const existingIndex = products.findIndex(p => p.id === product.id);
   
   if (existingIndex >= 0) {
-    products[existingIndex] = product;
+    products[existingIndex] = productWithStore;
   } else {
-    product.id = Date.now();
-    products.push(product);
+    productWithStore.id = Date.now();
+    productWithStore.createdAt = new Date().toISOString();
+    productWithStore.barcode = productWithStore.barcode || generateBarcode();
+    products.push(productWithStore);
   }
   
   localStorage.setItem('products', JSON.stringify(products));
-  return product;
+  return productWithStore;
 };
 
 export const getProducts = () => {
@@ -120,6 +134,52 @@ export const deleteProduct = (productId) => {
   const products = getProducts();
   const filtered = products.filter(p => p.id !== productId);
   localStorage.setItem('products', JSON.stringify(filtered));
+};
+
+// Store-specific product management
+export const getStoreProducts = (storeId = null) => {
+  const currentStoreId = storeId || getCurrentStore()?.id;
+  if (!currentStoreId) return [];
+  
+  const products = getProducts();
+  return products.filter(product => product.storeId === parseInt(currentStoreId));
+};
+
+export const updateProduct = (productId, updates, storeId = null) => {
+  const products = getProducts();
+  const currentStoreId = storeId || getCurrentStore()?.id;
+  
+  const updatedProducts = products.map(product => {
+    if (product.id === productId) {
+      return {
+        ...product,
+        ...updates,
+        storeId: parseInt(currentStoreId),
+        updatedAt: new Date().toISOString()
+      };
+    }
+    return product;
+  });
+  
+  localStorage.setItem('products', JSON.stringify(updatedProducts));
+  return updatedProducts.find(p => p.id === productId);
+};
+
+// Search products by barcode
+export const findProductByBarcode = (barcode, storeId = null) => {
+  const currentStoreId = storeId || getCurrentStore()?.id;
+  const storeProducts = getStoreProducts(currentStoreId);
+  
+  return storeProducts.find(product => 
+    product.barcode === barcode || 
+    product.sku === barcode ||
+    product.id.toString() === barcode
+  );
+};
+
+// Generate barcode for new products
+export const generateBarcode = () => {
+  return Date.now().toString() + Math.random().toString(36).substr(2, 5);
 };
 
 // Sales Management

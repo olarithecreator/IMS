@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Box,
   Paper,
@@ -59,10 +59,13 @@ const suppliers = [
 ];
 
 function AddProduct() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState({
     name: '',
     sku: '',
+    barcode: '',
     category: '',
     supplier: '',
     description: '',
@@ -78,7 +81,17 @@ function AddProduct() {
   });
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState(false);
-  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if barcode is passed from scanning
+    const barcodeFromUrl = searchParams.get('barcode');
+    if (barcodeFromUrl) {
+      setFormData(prev => ({
+        ...prev,
+        barcode: barcodeFromUrl
+      }));
+    }
+  }, [searchParams]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -125,15 +138,41 @@ function AddProduct() {
     setActiveStep((prevStep) => prevStep - 1);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateStep(activeStep)) {
-      // Simulate API call
-      console.log('Submitting product:', formData);
-      setSuccess(true);
-      setTimeout(() => {
-        navigate('/dashboard/inventory');
-      }, 2000);
+      try {
+        // Import store functions dynamically
+        const { saveProduct, getCurrentStore, generateBarcode } = await import('../utils/localStorage');
+        
+        const currentStore = getCurrentStore();
+        if (!currentStore) {
+          setErrors({ submit: 'No store context available. Please select a store.' });
+          return;
+        }
+        
+        // Prepare product data
+        const productData = {
+          ...formData,
+          barcode: formData.barcode || generateBarcode(),
+          price: parseFloat(formData.price) || 0,
+          cost: parseFloat(formData.cost) || 0,
+          stock: parseInt(formData.stock) || 0,
+          minStock: parseInt(formData.minStock) || 0,
+          maxStock: parseInt(formData.maxStock) || 100,
+        };
+        
+        // Save product to current store
+        await saveProduct(productData, currentStore.id);
+        
+        setSuccess(true);
+        setTimeout(() => {
+          navigate('/dashboard/products');
+        }, 2000);
+      } catch (error) {
+        console.error('Error saving product:', error);
+        setErrors({ submit: 'Failed to save product. Please try again.' });
+      }
     }
   };
 

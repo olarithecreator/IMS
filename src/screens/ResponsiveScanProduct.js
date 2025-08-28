@@ -41,7 +41,7 @@ import {
   Search,
   Inventory2,
 } from '@mui/icons-material';
-import { getProducts } from '../utils/localStorage';
+import { getProducts, getStoreProducts, getCurrentStore, findProductByBarcode } from '../utils/localStorage';
 
 function ResponsiveScanProduct() {
   const theme = useTheme();
@@ -59,19 +59,28 @@ function ResponsiveScanProduct() {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' });
   const [cameraStream, setCameraStream] = useState(null);
   const [scanning, setScanning] = useState(false);
+  const [currentStore, setCurrentStore] = useState(null);
 
   useEffect(() => {
-    // Load products
-    const productData = getProducts();
-    setProducts(productData);
+    // Load store context and products
+    const store = getCurrentStore();
+    setCurrentStore(store);
     
-    // Simulate live matches for demo
-    setLiveMatches([
-      { id: 1, name: 'iPhone 13 Pro', price: 350000, image: '📱', stock: 25 },
-      { id: 2, name: 'Samsung Galaxy S21', price: 280000, image: '📱', stock: 18 },
-      { id: 3, name: 'MacBook Air M1', price: 450000, image: '💻', stock: 12 },
-      { id: 4, name: 'AirPods Pro', price: 85000, image: '🎧', stock: 30 },
-    ]);
+    if (store) {
+      const storeProductData = getStoreProducts(store.id);
+      setProducts(storeProductData);
+      setLiveMatches(storeProductData.slice(0, 4)); // Show first 4 as live matches
+    } else {
+      const productData = getProducts();
+      setProducts(productData);
+      // Simulate live matches for demo
+      setLiveMatches([
+        { id: 1, name: 'iPhone 13 Pro', price: 350000, image: '📱', stock: 25 },
+        { id: 2, name: 'Samsung Galaxy S21', price: 280000, image: '📱', stock: 18 },
+        { id: 3, name: 'MacBook Air M1', price: 450000, image: '💻', stock: 12 },
+        { id: 4, name: 'AirPods Pro', price: 85000, image: '🎧', stock: 30 },
+      ]);
+    }
     
     return () => {
       // Cleanup camera stream on unmount
@@ -95,6 +104,11 @@ function ResponsiveScanProduct() {
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         videoRef.current.play();
+        
+        // Start barcode detection when video is ready
+        videoRef.current.addEventListener('loadedmetadata', () => {
+          startBarcodeDetection();
+        });
       }
       
       setCameraStream(stream);
@@ -114,6 +128,106 @@ function ResponsiveScanProduct() {
       });
     } finally {
       setScanning(false);
+    }
+  };
+
+  const startBarcodeDetection = () => {
+    if (!videoRef.current || !scannerActive) return;
+
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    let detectionInterval;
+    
+    const detectBarcode = async () => {
+      if (!videoRef.current || !scannerActive) return;
+
+      try {
+        canvas.width = videoRef.current.videoWidth;
+        canvas.height = videoRef.current.videoHeight;
+        context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+        
+        // Check if BarcodeDetector is available (Chrome/Edge)
+        if ('BarcodeDetector' in window) {
+          const barcodeDetector = new window.BarcodeDetector({
+            formats: ['qr_code', 'ean_13', 'ean_8', 'code_128', 'code_39', 'code_93', 'codabar', 'data_matrix']
+          });
+          
+          const barcodes = await barcodeDetector.detect(canvas);
+          
+          if (barcodes.length > 0) {
+            const barcode = barcodes[0];
+            handleBarcodeDetected(barcode.rawValue);
+            return;
+          }
+        }
+        
+        // Continue detection
+        if (scannerActive) {
+          detectionInterval = setTimeout(detectBarcode, 250); // Check every 250ms
+        }
+      } catch (error) {
+        console.error('Barcode detection error:', error);
+        if (scannerActive) {
+          detectionInterval = setTimeout(detectBarcode, 500);
+        }
+      }
+    };
+
+    // Start detection loop
+    detectBarcode();
+    
+    // Cleanup function
+    return () => {
+      if (detectionInterval) {
+        clearTimeout(detectionInterval);
+      }
+    };
+  };
+
+  const handleBarcodeDetected = (barcodeValue) => {
+    console.log('Barcode detected:', barcodeValue);
+    
+    // Find product by barcode
+    const product = findProductByBarcode(barcodeValue, currentStore?.id);
+    
+    if (product) {
+      // Product found - add to cart
+      addToCart(product);
+      setSnackbar({
+        open: true,
+        message: `Product "${product.name}" scanned successfully!`,
+        severity: 'success'
+      });
+      
+      // Stop camera briefly to prevent multiple scans
+      stopCamera();
+      setTimeout(() => {
+        if (confirm('Product added! Continue scanning?')) {
+          startCamera();
+        }
+      }, 1500);
+    } else {
+      // Product not found
+      setSnackbar({
+        open: true,
+        message: `Product with barcode "${barcodeValue}" not found in store inventory.`,
+        severity: 'warning'
+      });
+      
+      // Show option to add product
+      setTimeout(() => {
+        if (confirm('Product not found. Would you like to add it to inventory?')) {
+          navigate(`/dashboard/products/add?barcode=${barcodeValue}`);
+        }
+      }, 2000);
+    }
+  };
+
+  // Fallback manual barcode input for testing
+  const handleManualBarcodeInput = () => {
+    const barcode = prompt('Enter barcode manually for testing:');
+    if (barcode) {
+      handleBarcodeDetected(barcode);
     }
   };
 
@@ -359,6 +473,15 @@ function ResponsiveScanProduct() {
                         sx={{ borderRadius: 2 }}
                       >
                         {scanning ? 'Starting...' : 'Start Camera'}
+                      </Button>
+                      
+                      <Button
+                        variant="outlined"
+                        onClick={handleManualBarcodeInput}
+                        startIcon={<Search />}
+                        sx={{ borderRadius: 2 }}
+                      >
+                        Test Barcode
                       </Button>
                       
                       <IconButton
