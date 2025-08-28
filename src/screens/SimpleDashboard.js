@@ -36,24 +36,18 @@ function SimpleDashboard() {
 
   useEffect(() => {
     try {
-      console.log('SimpleDashboard: Loading user data...');
-      
       // Get current user
       const user = getCurrentUser();
-      console.log('SimpleDashboard: Current user:', user);
       setCurrentUser(user);
 
       // Get store context
       const store = getCurrentStore();
       const stores = getUserStores();
-      console.log('SimpleDashboard: Current store:', store);
-      console.log('SimpleDashboard: User stores:', stores);
       setCurrentStore(store);
       setUserStores(stores);
 
       // Initialize data for user
       if (user?.id) {
-        console.log('SimpleDashboard: Initializing user data...');
         initializeUserData(user.id);
       }
 
