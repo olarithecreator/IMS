@@ -89,16 +89,15 @@ function Register() {
       company: '',
       role: 'admin',
       provider: 'password',
-      verified: false
+      verified: true // Set as verified since we're skipping verification
     };
     const updatedUsers = [...users, newUser];
     localStorage.setItem('users', JSON.stringify(updatedUsers));
-    localStorage.setItem('userData', JSON.stringify(newUser));
-    setSuccess('Account created successfully! Check your email for verification.');
+    setSuccess('Account created successfully! Please login to continue.');
     
-    // Navigate to verification screen
+    // Navigate to login screen
     setTimeout(() => {
-      navigate('/verification', { state: { email: newUser.email } });
+      navigate('/login');
     }, 1500);
   };
 

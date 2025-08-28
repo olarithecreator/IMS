@@ -37,7 +37,6 @@ import Alerts from './screens/Alerts';
 import NewSale from './screens/NewSale';
 import Receipt from './screens/Receipt';
 import StoreManager from './screens/StoreManager';
-import VerificationCode from './screens/VerificationCode';
 import ForgotPassword from './screens/ForgotPassword';
 import ResetPassword from './screens/ResetPassword';
 
@@ -122,7 +121,6 @@ function App() {
         </Route>
         
         {/* Authentication flow routes */}
-        <Route path="/verification" element={<VerificationCode />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="confirm-invite" element={<ConfirmInvite />} />
