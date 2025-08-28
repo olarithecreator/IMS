@@ -6,6 +6,7 @@ import theme from './theme';
 import Layout from './components/Layout';
 import MobileLayout from './components/MobileLayout';
 import ResponsiveLayout from './components/ResponsiveLayout';
+import AdaptiveLayout from './components/AdaptiveLayout';
 import Onboarding from './screens/Onboarding';
 import Register from './screens/Register';
 import Login from './screens/Login';
@@ -13,6 +14,8 @@ import ResponsiveLogin from './screens/ResponsiveLogin';
 import StoreSetup from './screens/StoreSetup';
 import Dashboard from './screens/Dashboard';
 import ResponsiveDashboard from './screens/ResponsiveDashboard';
+import DesktopDashboard from './screens/DesktopDashboard';
+import DashboardSwitch from './components/DashboardSwitch';
 import ScanProduct from './screens/ScanProduct';
 import ProductPage from './screens/ProductPage';
 import ResponsiveProductPage from './screens/ResponsiveProductPage';
@@ -85,9 +88,9 @@ function App() {
         <Route path="/store-setup" element={<StoreSetup />} />
         
         {/* Protected routes with mobile layout */}
-        <Route path="/dashboard" element={<ProtectedRoute><ResponsiveLayout /></ProtectedRoute>}>
+        <Route path="/dashboard" element={<ProtectedRoute><AdaptiveLayout /></ProtectedRoute>}>
           {/* Dashboard Routes */}
-          <Route index element={<ResponsiveDashboard />} />
+          <Route index element={<DashboardSwitch />} />
           
           {/* Scan Product Routes */}
           <Route path="scan" element={<ScanProduct />} />
@@ -95,9 +98,12 @@ function App() {
           
           {/* Product Routes */}
           <Route path="products" element={<ResponsiveProductPage />} />
-          <Route path="products/:step" element={<ProductPage />} />
+          <Route path="products/add" element={<AddProduct />} />
+          <Route path="products/edit/:id" element={<EditProduct />} />
+          <Route path="products/:id" element={<ProductDetails />} />
           <Route path="product-details/:id" element={<ProductDetails />} />
           <Route path="add-product" element={<AddProduct />} />
+          <Route path="add-product/:step" element={<AddNewProduct />} />
           <Route path="edit-product/:id" element={<EditProduct />} />
           
           {/* Sales Routes */}
@@ -114,15 +120,23 @@ function App() {
           <Route path="settings" element={<Settings />} />
           
           {/* Store Management */}
-          <Route path="stores" element={<StoreManager />} />
+          <Route path="stores" element={<Stores />} />
+          <Route path="stores/add" element={<StoreManager />} />
+          <Route path="staff" element={<RolesAndStaff />} />
+          <Route path="staff/add" element={<AddStaff />} />
+          <Route path="staff/requests" element={<RolesAndStaff />} />
           <Route path="roles-staff" element={<RolesAndStaff />} />
           <Route path="roles-staff/add" element={<AddStaff />} />
+          <Route path="roles-staff/:step" element={<RolesAndStaff />} />
           
           {/* Help & Support */}
+          <Route path="help" element={<HelpAndSupport />} />
           <Route path="help-support" element={<HelpAndSupport />} />
+          <Route path="help-support/:step" element={<HelpAndSupport />} />
           
           {/* Reports */}
           <Route path="reports" element={<ReportPage />} />
+          <Route path="reports/:step" element={<ReportPage />} />
           
           {/* Logout */}
           <Route path="logout" element={<Logout />} />
