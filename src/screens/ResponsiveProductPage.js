@@ -263,8 +263,7 @@ function ResponsiveProductPage() {
   const [currentUser, setCurrentUser] = useState(null);
   const [currentStore, setCurrentStore] = useState(null);
 
-  useEffect(() => {
-    // Load data
+  const loadProducts = () => {
     const user = getCurrentUser();
     setCurrentUser(user);
     
@@ -275,14 +274,49 @@ function ResponsiveProductPage() {
       const storeProductData = getStoreProducts(store.id);
       setProducts(storeProductData);
       setFilteredProducts(storeProductData);
+      console.log(`Loaded ${storeProductData.length} products for store ${store.name}`);
     } else {
       // Fallback to all products if no store context
       const productData = getProducts();
       setProducts(productData);
       setFilteredProducts(productData);
+      console.log(`Loaded ${productData.length} products (no store context)`);
     }
     
     setLoading(false);
+  };
+
+  useEffect(() => {
+    // Initial load
+    loadProducts();
+    
+    // Listen for product events to auto-refresh
+    const handleProductAdded = (event) => {
+      console.log('Product added event received:', event.detail);
+      loadProducts(); // Refresh the product list
+    };
+    
+    const handleProductUpdated = (event) => {
+      console.log('Product updated event received:', event.detail);
+      loadProducts(); // Refresh the product list
+    };
+    
+    const handleProductDeleted = (event) => {
+      console.log('Product deleted event received:', event.detail);
+      loadProducts(); // Refresh the product list
+    };
+    
+    // Add event listeners
+    window.addEventListener('productAdded', handleProductAdded);
+    window.addEventListener('productUpdated', handleProductUpdated);
+    window.addEventListener('productDeleted', handleProductDeleted);
+    
+    // Cleanup event listeners
+    return () => {
+      window.removeEventListener('productAdded', handleProductAdded);
+      window.removeEventListener('productUpdated', handleProductUpdated);
+      window.removeEventListener('productDeleted', handleProductDeleted);
+    };
   }, []);
 
   useEffect(() => {
@@ -334,19 +368,18 @@ function ResponsiveProductPage() {
   };
 
   const handleDeleteProduct = async (product) => {
-    if (window.confirm(`Are you sure you want to delete "${product.name}"?`)) {
+    const confirmMessage = `Are you sure you want to delete "${product.name}"?\n\nThis action cannot be undone and will remove the product from your store inventory.`;
+    
+    if (window.confirm(confirmMessage)) {
       try {
-        deleteProduct(product.id);
-        // Refresh products list
-        const store = getCurrentStore();
-        if (store) {
-          const storeProductData = getStoreProducts(store.id);
-          setProducts(storeProductData);
-          setFilteredProducts(storeProductData);
+        const success = deleteProduct(product.id);
+        if (success) {
+          console.log(`Product "${product.name}" successfully deleted from store inventory`);
+          // The event listener will automatically refresh the products list
         }
       } catch (error) {
         console.error('Error deleting product:', error);
-        alert('Failed to delete product');
+        alert('Failed to delete product. Please try again.');
       }
     }
   };

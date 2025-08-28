@@ -163,9 +163,11 @@ function AddProduct() {
         };
         
         // Save product to current store
-        await saveProduct(productData, currentStore.id);
+        const savedProduct = await saveProduct(productData, currentStore.id);
         
         setSuccess(true);
+        console.log(`Product "${savedProduct.name}" successfully added to ${currentStore.name}`);
+        
         setTimeout(() => {
           navigate('/dashboard/products');
         }, 2000);

@@ -90,10 +90,6 @@ function NewSale() {
   const [showCustomerDialog, setShowCustomerDialog] = useState(false);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
 
-  useEffect(() => {
-    loadInitialData();
-  }, []);
-
   const loadInitialData = () => {
     try {
       const user = getCurrentUser();
@@ -106,6 +102,7 @@ function NewSale() {
         const storeProducts = getStoreProducts(store.id);
         setProducts(storeProducts);
         setFilteredProducts(storeProducts);
+        console.log(`NewSale: Loaded ${storeProducts.length} products for store ${store.name}`);
       }
       
       setLoading(false);
@@ -114,6 +111,42 @@ function NewSale() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadInitialData();
+    
+    // Listen for product events to auto-refresh products in sale interface
+    const handleProductAdded = (event) => {
+      console.log('NewSale: Product added event received:', event.detail);
+      loadInitialData(); // Refresh products
+    };
+    
+    const handleProductUpdated = (event) => {
+      console.log('NewSale: Product updated event received:', event.detail);
+      loadInitialData(); // Refresh products
+    };
+    
+    const handleProductDeleted = (event) => {
+      console.log('NewSale: Product deleted event received:', event.detail);
+      loadInitialData(); // Refresh products
+      
+      // Also remove from cart if it exists there
+      const deletedProductId = event.detail.productId;
+      setCart(prevCart => prevCart.filter(item => item.id !== deletedProductId));
+    };
+    
+    // Add event listeners
+    window.addEventListener('productAdded', handleProductAdded);
+    window.addEventListener('productUpdated', handleProductUpdated);
+    window.addEventListener('productDeleted', handleProductDeleted);
+    
+    // Cleanup event listeners
+    return () => {
+      window.removeEventListener('productAdded', handleProductAdded);
+      window.removeEventListener('productUpdated', handleProductUpdated);
+      window.removeEventListener('productDeleted', handleProductDeleted);
+    };
+  }, []);
 
   useEffect(() => {
     // Filter products based on search

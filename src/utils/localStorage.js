@@ -49,6 +49,7 @@ export const saveProduct = (product, storeId = null) => {
   };
   
   const existingIndex = products.findIndex(p => p.id === product.id);
+  const isNewProduct = existingIndex < 0;
   
   if (existingIndex >= 0) {
     products[existingIndex] = productWithStore;
@@ -60,6 +61,20 @@ export const saveProduct = (product, storeId = null) => {
   }
   
   localStorage.setItem('products', JSON.stringify(products));
+  
+  // Trigger storage event to notify other components
+  if (isNewProduct) {
+    window.dispatchEvent(new CustomEvent('productAdded', { 
+      detail: { product: productWithStore, storeId: currentStoreId } 
+    }));
+    console.log(`New product "${productWithStore.name}" added to store ${currentStoreId}`);
+  } else {
+    window.dispatchEvent(new CustomEvent('productUpdated', { 
+      detail: { product: productWithStore, storeId: currentStoreId } 
+    }));
+    console.log(`Product "${productWithStore.name}" updated in store ${currentStoreId}`);
+  }
+  
   return productWithStore;
 };
 
@@ -132,8 +147,16 @@ export const getProducts = () => {
 
 export const deleteProduct = (productId) => {
   const products = getProducts();
-  const filtered = products.filter(p => p.id !== productId);
+  const filtered = products.filter(p => p.id !== parseInt(productId));
   localStorage.setItem('products', JSON.stringify(filtered));
+  
+  // Trigger storage event to notify other components
+  window.dispatchEvent(new CustomEvent('productDeleted', { 
+    detail: { productId: parseInt(productId) } 
+  }));
+  
+  console.log(`Product ${productId} deleted from store inventory`);
+  return true;
 };
 
 // Store-specific product management
