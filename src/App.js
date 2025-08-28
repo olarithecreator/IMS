@@ -17,6 +17,7 @@ import ResponsiveDashboard from './screens/ResponsiveDashboard';
 import DesktopDashboard from './screens/DesktopDashboard';
 import DashboardSwitch from './components/DashboardSwitch';
 import ScanProduct from './screens/ScanProduct';
+import ResponsiveScanProduct from './screens/ResponsiveScanProduct';
 import ProductPage from './screens/ProductPage';
 import ResponsiveProductPage from './screens/ResponsiveProductPage';
 import Sales from './screens/Sales';
@@ -93,8 +94,8 @@ function App() {
           <Route index element={<DashboardSwitch />} />
           
           {/* Scan Product Routes */}
-          <Route path="scan" element={<ScanProduct />} />
-          <Route path="scan/:step" element={<ScanProduct />} />
+          <Route path="scan" element={<ResponsiveScanProduct />} />
+          <Route path="scan/:step" element={<ResponsiveScanProduct />} />
           
           {/* Product Routes */}
           <Route path="products" element={<ResponsiveProductPage />} />

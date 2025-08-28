@@ -415,6 +415,9 @@ function DesktopLayout() {
           bgcolor: 'background.default',
           overflow: 'auto',
           height: '100vh',
+          width: `calc(100vw - ${drawerWidth}px)`,
+          maxWidth: `calc(100vw - ${drawerWidth}px)`,
+          minHeight: '100vh',
         }}
       >
         <Outlet />

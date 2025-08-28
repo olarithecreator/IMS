@@ -357,7 +357,7 @@ function ResponsiveProductPage() {
   }
 
   return (
-    <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3 } }}>
+    <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3 }, width: '100%', maxWidth: { xs: 'sm', md: 'none' } }}>
       {/* Header */}
       <Box sx={{ mb: { xs: 3, sm: 4 } }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>

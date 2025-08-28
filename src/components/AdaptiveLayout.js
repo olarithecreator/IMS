@@ -1,15 +1,15 @@
 import React from 'react';
 import { useMediaQuery, useTheme } from '@mui/material';
-import MobileLayout from './MobileLayout';
+import ResponsiveMobileLayout from './ResponsiveMobileLayout';
 import DesktopLayout from './DesktopLayout';
 
 function AdaptiveLayout() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  // Use the original MobileLayout for mobile devices
-  // Use the new DesktopLayout for desktop/tablet
-  return isMobile ? <MobileLayout /> : <DesktopLayout />;
+  // Use ResponsiveMobileLayout for mobile devices with proper hamburger menu
+  // Use DesktopLayout for desktop/tablet
+  return isMobile ? <ResponsiveMobileLayout /> : <DesktopLayout />;
 }
 
 export default AdaptiveLayout;

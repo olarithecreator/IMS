@@ -401,8 +401,8 @@ function DesktopDashboard() {
   ];
 
   return (
-    <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
-      <Container maxWidth="xl" sx={{ py: 4 }}>
+    <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', width: '100%' }}>
+      <Container maxWidth="xl" sx={{ py: 4, width: '100%', maxWidth: 'none' }}>
         {/* Header Section */}
         <Box sx={{ mb: 4 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
