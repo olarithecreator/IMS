@@ -428,3 +428,189 @@ export const initializeDefaultData = () => {
     saveCompany(sampleCompany);
   }
 };
+
+// Initialize sample data for new users
+export const initializeUserData = (userId) => {
+  // Check if user already has data
+  const products = getProducts();
+  const sales = getSales();
+  
+  // If no data exists, create sample data
+  if (products.length === 0) {
+    const sampleProducts = [
+      {
+        id: 1,
+        name: 'iPhone 13 Pro',
+        category: 'Electronics',
+        price: 350000,
+        stock: 25,
+        sku: 'IPH13P001',
+        image: '/api/placeholder/200/200',
+        description: 'Latest iPhone with advanced camera system',
+        supplier: 'Apple Inc',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        id: 2,
+        name: 'Samsung Galaxy S21',
+        category: 'Electronics',
+        price: 280000,
+        stock: 18,
+        sku: 'SGS21001',
+        image: '/api/placeholder/200/200',
+        description: 'Premium Android smartphone',
+        supplier: 'Samsung',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        id: 3,
+        name: 'MacBook Air M1',
+        category: 'Computers',
+        price: 450000,
+        stock: 12,
+        sku: 'MBA21001',
+        image: '/api/placeholder/200/200',
+        description: 'Ultra-thin laptop with M1 chip',
+        supplier: 'Apple Inc',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        id: 4,
+        name: 'AirPods Pro',
+        category: 'Audio',
+        price: 85000,
+        stock: 30,
+        sku: 'APP001',
+        image: '/api/placeholder/200/200',
+        description: 'Wireless earbuds with noise cancellation',
+        supplier: 'Apple Inc',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        id: 5,
+        name: 'Dell XPS 13',
+        category: 'Computers',
+        price: 420000,
+        stock: 8,
+        sku: 'DXP13001',
+        image: '/api/placeholder/200/200',
+        description: 'Premium ultrabook for professionals',
+        supplier: 'Dell',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        id: 6,
+        name: 'Sony WH-1000XM4',
+        category: 'Audio',
+        price: 95000,
+        stock: 15,
+        sku: 'SWH1000001',
+        image: '/api/placeholder/200/200',
+        description: 'Premium noise-canceling headphones',
+        supplier: 'Sony',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        id: 7,
+        name: 'iPad Pro 11"',
+        category: 'Tablets',
+        price: 320000,
+        stock: 20,
+        sku: 'IPP11001',
+        image: '/api/placeholder/200/200',
+        description: 'Professional tablet with M1 chip',
+        supplier: 'Apple Inc',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        id: 8,
+        name: 'Nike Air Max 270',
+        category: 'Footwear',
+        price: 35000,
+        stock: 5, // Low stock item
+        sku: 'NAM270001',
+        image: '/api/placeholder/200/200',
+        description: 'Comfortable running shoes',
+        supplier: 'Nike',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        id: 9,
+        name: 'Adidas Ultraboost 22',
+        category: 'Footwear',
+        price: 42000,
+        stock: 22,
+        sku: 'AUB22001',
+        image: '/api/placeholder/200/200',
+        description: 'High-performance running shoes',
+        supplier: 'Adidas',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        id: 10,
+        name: 'Canon EOS R5',
+        category: 'Cameras',
+        price: 1200000,
+        stock: 6,
+        sku: 'CEOSR5001',
+        image: '/api/placeholder/200/200',
+        description: 'Professional mirrorless camera',
+        supplier: 'Canon',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+    ];
+    
+    localStorage.setItem('products', JSON.stringify(sampleProducts));
+  }
+  
+  if (sales.length === 0) {
+    const sampleSales = [
+      {
+        id: 1,
+        items: [
+          { id: 1, name: 'iPhone 13 Pro', price: 350000, quantity: 1 },
+          { id: 4, name: 'AirPods Pro', price: 85000, quantity: 1 }
+        ],
+        total: 435000,
+        date: new Date().toISOString(),
+        customer: 'John Doe',
+        paymentMethod: 'Cash',
+        staff: userId,
+      },
+      {
+        id: 2,
+        items: [
+          { id: 2, name: 'Samsung Galaxy S21', price: 280000, quantity: 1 }
+        ],
+        total: 280000,
+        date: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+        customer: 'Jane Smith',
+        paymentMethod: 'Card',
+        staff: userId,
+      },
+      {
+        id: 3,
+        items: [
+          { id: 8, name: 'Nike Air Max 270', price: 35000, quantity: 2 }
+        ],
+        total: 70000,
+        date: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+        customer: 'Mike Johnson',
+        paymentMethod: 'Transfer',
+        staff: userId,
+      },
+    ];
+    
+    localStorage.setItem('sales', JSON.stringify(sampleSales));
+  }
+};

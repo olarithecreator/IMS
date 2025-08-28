@@ -304,7 +304,7 @@ function ResponsiveDashboard() {
   }
 
   return (
-    <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3, md: 4 } }}>
+    <Box sx={{ width: '100%' }}>
       {/* Header Section */}
       <Box sx={{ mb: { xs: 3, sm: 4 } }}>
         <Typography variant={isMobile ? 'h5' : 'h4'} sx={{ fontWeight: 'bold', mb: 1 }}>
@@ -462,8 +462,8 @@ function ResponsiveDashboard() {
         >
           <Add />
         </Fab>
-      )}
-    </Container>
+              )}
+    </Box>
   );
 }
 

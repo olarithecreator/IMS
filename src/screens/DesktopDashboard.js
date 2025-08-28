@@ -401,8 +401,7 @@ function DesktopDashboard() {
   ];
 
   return (
-    <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', width: '100%' }}>
-      <Container maxWidth="xl" sx={{ py: 4, width: '100%', maxWidth: 'none' }}>
+    <Box sx={{ width: '100%' }}>
         {/* Header Section */}
         <Box sx={{ mb: 4 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
@@ -524,7 +523,6 @@ function DesktopDashboard() {
           activities={recentActivities}
           onViewAll={() => navigate('/dashboard/notifications')}
         />
-      </Container>
     </Box>
   );
 }

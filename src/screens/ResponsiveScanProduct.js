@@ -233,8 +233,7 @@ function ResponsiveScanProduct() {
   };
 
   return (
-    <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
-      <Container maxWidth="lg" sx={{ py: { xs: 1, sm: 2 } }}>
+    <Box sx={{ width: '100%' }}>
         {/* Header */}
         <Box sx={{ mb: 2 }}>
           <Typography variant={isMobile ? 'h5' : 'h4'} sx={{ fontWeight: 'bold', mb: 1 }}>
@@ -571,7 +570,6 @@ function ResponsiveScanProduct() {
             {scannerActive ? <CropFree /> : <Camera />}
           </Fab>
         )}
-      </Container>
 
       <canvas ref={canvasRef} style={{ display: 'none' }} />
     </Box>

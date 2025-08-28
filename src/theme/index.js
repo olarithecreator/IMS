@@ -86,14 +86,15 @@ const colors = {
   }
 };
 
-// Responsive breakpoints
+// Global responsive breakpoints (Bootstrap-like)
 const breakpoints = {
   values: {
-    xs: 0,
-    sm: 600,
-    md: 900,
-    lg: 1200,
-    xl: 1536,
+    xs: 0,      // Mobile phones
+    sm: 576,    // Large phones / small tablets
+    md: 768,    // Tablets
+    lg: 992,    // Small desktops
+    xl: 1200,   // Medium desktops
+    xxl: 1400,  // Large desktops
   },
 };
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { getUsers, saveUser } from '../utils/localStorage';
+import { getUsers, saveUser, initializeUserData } from '../utils/localStorage';
 import {
   Box,
   Container,
@@ -77,6 +77,9 @@ function ResponsiveLogin() {
 
       // Save logged in user
       saveUser(user);
+      
+      // Initialize sample data for new users
+      initializeUserData(user.id);
       
       // Navigate to dashboard
       navigate('/dashboard');
