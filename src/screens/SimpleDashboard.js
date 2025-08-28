@@ -17,6 +17,7 @@ import {
   AttachMoney,
   Warning,
   Add,
+  Store,
 } from '@mui/icons-material';
 import { getCurrentUser, getProducts, getSales, initializeUserData } from '../utils/localStorage';
 
@@ -212,6 +213,15 @@ function SimpleDashboard() {
           >
             Scan Product
           </Button>
+          {currentUser?.role === 'owner' && (
+            <Button
+              variant="outlined"
+              startIcon={<Store />}
+              onClick={() => navigate('/dashboard/stores')}
+            >
+              Manage Stores
+            </Button>
+          )}
         </Stack>
       </Paper>
 

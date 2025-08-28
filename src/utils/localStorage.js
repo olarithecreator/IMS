@@ -338,6 +338,20 @@ export const getCompanies = () => {
   return JSON.parse(localStorage.getItem('companies') || '[]');
 };
 
+export const getCompanyById = (companyId) => {
+  const companies = getCompanies();
+  return companies.find(c => c.id === companyId);
+};
+
+export const updateCompany = (companyId, updates) => {
+  const companies = getCompanies();
+  const updatedCompanies = companies.map(c => 
+    c.id === companyId ? { ...c, ...updates, updatedAt: new Date().toISOString() } : c
+  );
+  localStorage.setItem('companies', JSON.stringify(updatedCompanies));
+  return updatedCompanies.find(c => c.id === companyId);
+};
+
 // Request Management
 export const getManagerRequests = () => {
   return JSON.parse(localStorage.getItem('managerRequests') || '[]');
