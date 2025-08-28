@@ -3,9 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { Box, ThemeProvider, CssBaseline } from '@mui/material';
 import { initializeDefaultData, isAuthenticated } from './utils/localStorage';
 import theme from './theme';
-import Layout from './components/Layout';
-import MobileLayout from './components/MobileLayout';
-import ResponsiveLayout from './components/ResponsiveLayout';
+// Removed unused layout imports
 import AdaptiveLayout from './components/AdaptiveLayout';
 import Onboarding from './screens/Onboarding';
 import Register from './screens/Register';
@@ -16,14 +14,14 @@ import ResponsiveScanProduct from './screens/ResponsiveScanProduct';
 import ResponsiveProductPage from './screens/ResponsiveProductPage';
 import Sales from './screens/Sales';
 import Notifications from './screens/Notifications';
-import Stores from './screens/Stores';
+// Removed unused Stores import
 import Profile from './screens/Profile';
 import RolesAndStaff from './screens/RolesAndStaff';
 import HelpAndSupport from './screens/HelpAndSupport';
 import Logout from './screens/Logout';
 import AddNewProduct from './screens/AddNewProduct';
 import ReportPage from './screens/ReportPage';
-import AlertForgetPassword from './screens/AlertForgetPassword';
+// Removed unused AlertForgetPassword import
 import LocalStorageViewer from './screens/LocalStorageViewer';
 import InventoryList from './screens/InventoryList';
 import Categories from './screens/Categories';

@@ -106,9 +106,14 @@ function ResponsiveScanProduct() {
         videoRef.current.play();
         
         // Start barcode detection when video is ready
-        videoRef.current.addEventListener('loadedmetadata', () => {
+        const handleLoadedMetadata = () => {
           startBarcodeDetection();
-        });
+        };
+        
+        videoRef.current.addEventListener('loadedmetadata', handleLoadedMetadata);
+        
+        // Store reference for cleanup
+        videoRef.current._metadataListener = handleLoadedMetadata;
       }
       
       setCameraStream(stream);
@@ -236,6 +241,13 @@ function ResponsiveScanProduct() {
       cameraStream.getTracks().forEach(track => track.stop());
       setCameraStream(null);
     }
+    
+    // Clean up event listener
+    if (videoRef.current && videoRef.current._metadataListener) {
+      videoRef.current.removeEventListener('loadedmetadata', videoRef.current._metadataListener);
+      delete videoRef.current._metadataListener;
+    }
+    
     setScannerActive(false);
     setFlashOn(false);
     

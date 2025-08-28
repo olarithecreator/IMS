@@ -147,12 +147,19 @@ export const getProducts = () => {
 
 export const deleteProduct = (productId) => {
   const products = getProducts();
-  const filtered = products.filter(p => p.id !== parseInt(productId));
+  const id = parseInt(productId);
+  
+  if (isNaN(id)) {
+    console.error('Invalid product ID for deletion:', productId);
+    return false;
+  }
+  
+  const filtered = products.filter(p => p.id !== id);
   localStorage.setItem('products', JSON.stringify(filtered));
   
   // Trigger storage event to notify other components
   window.dispatchEvent(new CustomEvent('productDeleted', { 
-    detail: { productId: parseInt(productId) } 
+    detail: { productId: id } 
   }));
   
   console.log(`Product ${productId} deleted from store inventory`);
@@ -164,8 +171,14 @@ export const getStoreProducts = (storeId = null) => {
   const currentStoreId = storeId || getCurrentStore()?.id;
   if (!currentStoreId) return [];
   
+  const storeIdNum = parseInt(currentStoreId);
+  if (isNaN(storeIdNum)) {
+    console.error('Invalid store ID for products:', currentStoreId);
+    return [];
+  }
+  
   const products = getProducts();
-  return products.filter(product => product.storeId === parseInt(currentStoreId));
+  return products.filter(product => product.storeId === storeIdNum);
 };
 
 export const updateProduct = (productId, updates, storeId = null) => {
