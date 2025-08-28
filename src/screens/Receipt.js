@@ -8,16 +8,22 @@ import {
   IconButton,
   Paper,
   Divider,
+  useTheme,
+  useMediaQuery,
+  Stack,
 } from '@mui/material';
-import { ArrowBack, Share, Download } from '@mui/icons-material';
+import { ArrowBack, Share, Download, Print, ShoppingCart } from '@mui/icons-material';
 
 function Receipt() {
+  const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
   
   // Get sale data from location state or localStorage
   const saleData = location.state?.sale || JSON.parse(localStorage.getItem('sales') || '[]').find(s => s.id.toString() === id);
+  const fromNewSale = location.state?.fromNewSale;
 
   if (!saleData) {
     return (
@@ -41,16 +47,56 @@ function Receipt() {
     console.log('Downloading receipt...');
   };
 
+  const handleBack = () => {
+    if (fromNewSale) {
+      navigate('/dashboard/sales');
+    } else {
+      navigate(-1);
+    }
+  };
+
+  const handleNewSale = () => {
+    navigate('/dashboard/sales/new');
+  };
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-NG', {
+      style: 'currency',
+      currency: 'NGN',
+    }).format(amount);
+  };
+
   return (
     <Container maxWidth="sm" sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', py: 2 }}>
-        <IconButton onClick={() => navigate(-1)}>
+      <Box sx={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        py: 2,
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+        mb: 2
+      }}>
+        <IconButton 
+          onClick={handleBack}
+          sx={{ mr: 2 }}
+        >
           <ArrowBack />
         </IconButton>
-        <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center', fontWeight: 'bold' }}>
+        <Typography variant={isMobile ? 'h5' : 'h4'} sx={{ flexGrow: 1, fontWeight: 'bold' }}>
           Receipt
         </Typography>
+        <Stack direction="row" spacing={1}>
+          <IconButton onClick={handleShare} title="Share">
+            <Share />
+          </IconButton>
+          <IconButton onClick={handleDownload} title="Download">
+            <Download />
+          </IconButton>
+          <IconButton onClick={() => window.print()} title="Print">
+            <Print />
+          </IconButton>
+        </Stack>
       </Box>
 
       {/* Receipt Content */}
@@ -146,37 +192,67 @@ function Receipt() {
       </Paper>
 
       {/* Action Buttons */}
-      <Box sx={{ p: 2, display: 'flex', gap: 2 }}>
+      <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
         <Button
           variant="contained"
           fullWidth
-          startIcon={<Share />}
-          onClick={handleShare}
+          startIcon={<ShoppingCart />}
+          onClick={handleNewSale}
           sx={{
             py: 2,
-            borderRadius: 3,
+            borderRadius: 2,
             fontSize: '1rem',
             fontWeight: 'bold',
             textTransform: 'none',
           }}
         >
-          Share Receipt
+          New Sale
         </Button>
-        <Button
-          variant="outlined"
-          fullWidth
-          startIcon={<Download />}
-          onClick={handleDownload}
-          sx={{
-            py: 2,
-            borderRadius: 3,
-            fontSize: '1rem',
-            fontWeight: 'bold',
-            textTransform: 'none',
-          }}
-        >
-          Download Receipt
-        </Button>
+        
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button
+            variant="outlined"
+            fullWidth
+            startIcon={<Share />}
+            onClick={handleShare}
+            sx={{
+              py: 1.5,
+              borderRadius: 2,
+              textTransform: 'none',
+              fontWeight: 600,
+            }}
+          >
+            Share
+          </Button>
+          <Button
+            variant="outlined"
+            fullWidth
+            startIcon={<Download />}
+            onClick={handleDownload}
+            sx={{
+              py: 1.5,
+              borderRadius: 2,
+              textTransform: 'none',
+              fontWeight: 600,
+            }}
+          >
+            Download
+          </Button>
+          <Button
+            variant="outlined"
+            fullWidth
+            startIcon={<Print />}
+            onClick={() => window.print()}
+            sx={{
+              py: 1.5,
+              borderRadius: 2,
+              textTransform: 'none',
+              fontWeight: 600,
+            }}
+          >
+            Print
+          </Button>
+        </Box>
       </Box>
     </Container>
   );

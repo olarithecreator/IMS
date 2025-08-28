@@ -24,6 +24,8 @@ import {
   CardContent,
   Tab,
   Tabs,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import {
   ArrowBack,
@@ -36,7 +38,9 @@ import {
 } from '@mui/icons-material';
 
 function NewSale() {
+  const theme = useTheme();
   const navigate = useNavigate();
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
   const [saleNumber, setSaleNumber] = useState('Sale 1');
   const [items, setItems] = useState([
     { id: 1, name: 'Soup', price: 230, quantity: 2, total: 460, image: '🍲' },
@@ -84,6 +88,9 @@ function NewSale() {
       paymentMethod: paymentMethod,
       date: new Date().toISOString(),
       saleNumber: saleNumber,
+      customer: 'Walk-in Customer',
+      staff: 'Current User',
+      status: 'completed',
     };
 
     // Store in localStorage
@@ -92,19 +99,36 @@ function NewSale() {
     localStorage.setItem('sales', JSON.stringify(sales));
 
     // Navigate to receipt
-    navigate(`/dashboard/sales/receipt/${sale.id}`, { state: { sale } });
+    navigate(`/dashboard/sales/receipt/${sale.id}`, { state: { sale, fromNewSale: true } });
+  };
+
+  const handleBack = () => {
+    navigate('/dashboard/sales');
   };
 
   return (
-    <Container maxWidth="sm" sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ width: '100%', maxWidth: 'none', p: { xs: 2, sm: 3 } }}>
       {/* Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', py: 2, px: 1 }}>
-        <IconButton onClick={() => navigate(-1)}>
+      <Box sx={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        mb: 3,
+        pb: 2,
+        borderBottom: '1px solid',
+        borderColor: 'divider'
+      }}>
+        <IconButton 
+          onClick={handleBack}
+          sx={{ mr: 2 }}
+        >
           <ArrowBack />
         </IconButton>
-        <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center', fontWeight: 'bold' }}>
+        <Typography variant={isMobile ? 'h5' : 'h4'} sx={{ flexGrow: 1, fontWeight: 'bold' }}>
           New Sale
         </Typography>
+        <IconButton>
+          <QrCodeScanner />
+        </IconButton>
         <IconButton>
           <Notifications />
         </IconButton>
