@@ -245,7 +245,7 @@ function Register() {
           <Box sx={{ textAlign: 'center', mt: 3 }}>
             <Typography variant="body2">Already have an account? <Link to="/login" style={{ textDecoration: 'none' }}>Sign In</Link></Typography>
             <Box sx={{ mt: 1 }}>
-              <Link to="/dashboard/staff-login" style={{ textDecoration: 'none' }}>
+              <Link to="/staff-login" style={{ textDecoration: 'none' }}>
                 <Chip label="Store Staff Login" variant="outlined" />
               </Link>
             </Box>

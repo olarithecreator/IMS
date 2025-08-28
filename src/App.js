@@ -39,6 +39,10 @@ import Receipt from './screens/Receipt';
 import StoreManager from './screens/StoreManager';
 import ForgotPassword from './screens/ForgotPassword';
 import ResetPassword from './screens/ResetPassword';
+import RoleSelection from './screens/RoleSelection';
+import OwnerRegister from './screens/OwnerRegister';
+import ManagerRegister from './screens/ManagerRegister';
+import StaffRegister from './screens/StaffRegister';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -58,8 +62,12 @@ function App() {
         <Route path="/" element={<Onboarding />} />
         <Route path="/onboarding/:step" element={<Onboarding />} />
         
-        {/* Register Route (3.2) */}
-        <Route path="/register" element={<Register />} />
+        {/* Register Routes */}
+        <Route path="/register" element={<RoleSelection />} />
+        <Route path="/register/owner" element={<OwnerRegister />} />
+        <Route path="/register/manager" element={<ManagerRegister />} />
+        <Route path="/register/staff" element={<StaffRegister />} />
+        <Route path="/register/original" element={<Register />} />
         
         {/* Verification removed: email-based registration only */}
         
@@ -123,8 +131,8 @@ function App() {
         {/* Authentication flow routes */}
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="confirm-invite" element={<ConfirmInvite />} />
-        <Route path="staff-login" element={<StaffPinLogin />} />
+        <Route path="/confirm-invite" element={<ConfirmInvite />} />
+        <Route path="/staff-login" element={<StaffPinLogin />} />
       </Routes>
     </Box>
   );

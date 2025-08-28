@@ -319,10 +319,112 @@ export const getNotifications = () => {
   return JSON.parse(stored);
 };
 
+// Company Management
+export const saveCompany = (company) => {
+  const companies = getCompanies();
+  const existingIndex = companies.findIndex(c => c.id === company.id);
+  
+  if (existingIndex >= 0) {
+    companies[existingIndex] = company;
+  } else {
+    companies.push(company);
+  }
+  
+  localStorage.setItem('companies', JSON.stringify(companies));
+  return company;
+};
+
+export const getCompanies = () => {
+  return JSON.parse(localStorage.getItem('companies') || '[]');
+};
+
+// Request Management
+export const getManagerRequests = () => {
+  return JSON.parse(localStorage.getItem('managerRequests') || '[]');
+};
+
+export const getStaffRequests = () => {
+  return JSON.parse(localStorage.getItem('staffRequests') || '[]');
+};
+
+export const approveManagerRequest = (requestId) => {
+  const requests = getManagerRequests();
+  const request = requests.find(r => r.id === requestId);
+  
+  if (request) {
+    // Convert request to user
+    const newUser = {
+      ...request,
+      status: 'approved',
+      approvedAt: new Date().toISOString(),
+      permissions: ['inventory', 'sales', 'reports'], // Manager permissions
+    };
+    
+    // Add to users
+    const users = getUsers();
+    users.push(newUser);
+    localStorage.setItem('users', JSON.stringify(users));
+    
+    // Remove from requests
+    const updatedRequests = requests.filter(r => r.id !== requestId);
+    localStorage.setItem('managerRequests', JSON.stringify(updatedRequests));
+    
+    return newUser;
+  }
+  return null;
+};
+
+export const approveStaffRequest = (requestId, pin) => {
+  const requests = getStaffRequests();
+  const request = requests.find(r => r.id === requestId);
+  
+  if (request) {
+    // Convert request to user
+    const newUser = {
+      ...request,
+      status: 'approved',
+      pin: pin, // 4-digit PIN for staff login
+      approvedAt: new Date().toISOString(),
+      permissions: ['sales'], // Limited permissions for staff
+    };
+    
+    // Add to users
+    const users = getUsers();
+    users.push(newUser);
+    localStorage.setItem('users', JSON.stringify(users));
+    
+    // Remove from requests
+    const updatedRequests = requests.filter(r => r.id !== requestId);
+    localStorage.setItem('staffRequests', JSON.stringify(updatedRequests));
+    
+    return newUser;
+  }
+  return null;
+};
+
 // Initialize default data
 export const initializeDefaultData = () => {
   getProducts();
   getStaff();
   getNotifications();
   getSettings();
+  
+  // Initialize sample company if none exists
+  const companies = getCompanies();
+  if (companies.length === 0) {
+    const sampleCompany = {
+      id: Date.now(),
+      name: 'Sample Business',
+      owner: 1,
+      stores: [{
+        id: Date.now(),
+        name: 'Main Store',
+        address: '123 Business Street, Lagos',
+        phone: '+234 123 456 7890',
+        managerId: 1,
+      }],
+      createdAt: new Date().toISOString(),
+    };
+    saveCompany(sampleCompany);
+  }
 };
