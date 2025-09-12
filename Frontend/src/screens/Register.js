@@ -70,7 +70,31 @@ function Register() {
       return;
     }
 
-    // Simulate registration - in real app, this would be an API call
+    // Check if user already exists
+    const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
+    const userExists = existingUsers.find(user => user.email === formData.email);
+    
+    if (userExists) {
+      setError('An account with this email already exists');
+      return;
+    }
+
+    // Store user data in localStorage
+    const newUser = {
+      id: Date.now(),
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      password: formData.password, // In a real app, this should be hashed
+      company: formData.company,
+      phone: formData.phone,
+      role: formData.role,
+      createdAt: new Date().toISOString()
+    };
+
+    existingUsers.push(newUser);
+    localStorage.setItem('users', JSON.stringify(existingUsers));
+
     setSuccess(true);
     setTimeout(() => {
       navigate('/login');
@@ -122,8 +146,8 @@ function Register() {
                 <TextField
                   required
                   fullWidth
-                  label="First Name"
                   name="firstName"
+                  label="First Name"
                   value={formData.firstName}
                   onChange={handleChange}
                   InputProps={{
@@ -139,8 +163,8 @@ function Register() {
                 <TextField
                   required
                   fullWidth
-                  label="Last Name"
                   name="lastName"
+                  label="Last Name"
                   value={formData.lastName}
                   onChange={handleChange}
                   InputProps={{
@@ -156,8 +180,8 @@ function Register() {
                 <TextField
                   required
                   fullWidth
-                  label="Email Address"
                   name="email"
+                  label="Email Address"
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
@@ -172,10 +196,9 @@ function Register() {
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  required
                   fullWidth
-                  label="Company Name"
                   name="company"
+                  label="Company Name"
                   value={formData.company}
                   onChange={handleChange}
                   InputProps={{
@@ -190,8 +213,8 @@ function Register() {
               <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  label="Phone Number"
                   name="phone"
+                  label="Phone Number"
                   value={formData.phone}
                   onChange={handleChange}
                   InputProps={{
@@ -212,9 +235,9 @@ function Register() {
                     label="Role"
                     onChange={handleChange}
                   >
-                    <MenuItem value="admin">Administrator</MenuItem>
+                    <MenuItem value="admin">Admin</MenuItem>
                     <MenuItem value="manager">Manager</MenuItem>
-                    <MenuItem value="user">User</MenuItem>
+                    <MenuItem value="staff">Staff</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
